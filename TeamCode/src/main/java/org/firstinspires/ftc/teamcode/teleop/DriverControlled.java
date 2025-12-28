@@ -67,6 +67,7 @@ public class DriverControlled extends NextFTCOpMode {
          * super.onUpdate();
          */
 
+        /*
         telemetry.addData("Velocity RPM", Flywheel.INSTANCE.getVelocityRPM());
         telemetry.addData("Distance from goal inside subsystem", Flywheel.distanceToGoal); // Flywheel.INSTANCE.distance);
         telemetry.addData("Goal Velocity inside subsystem: ", Flywheel.launchVelocity); // goalVelocity);
@@ -75,11 +76,16 @@ public class DriverControlled extends NextFTCOpMode {
         telemetry.update();
         super.onUpdate();
 
+         */
+
     }
 
     @Override
     public void onInit() {
         Flywheel.powerState = false;
+        Turret.powerState = false;
+        Flicker.INSTANCE.allDown();
+
     }
 
     @Override
@@ -101,29 +107,10 @@ public class DriverControlled extends NextFTCOpMode {
                     Flywheel.INSTANCE.shutdown().schedule();
                 });
 
-        Gamepads.gamepad1().b()
-                .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.openServo.schedule();
-                });
 
-        Gamepads.gamepad1().a()
-                .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.closeServo.schedule();
-                });
 
-        Gamepads.gamepad1().dpadUp().whenBecomesTrue(() -> {
-            Intake.INSTANCE.in().schedule();
-        });
 
         Gamepads.gamepad1().leftTrigger().greaterThan(0.2)
-                .whenBecomesTrue(() -> {
-                    Intake.INSTANCE.in().schedule();
-                })
-                .whenBecomesFalse(() -> {
-                    Intake.INSTANCE.stop().schedule();
-                });
-
-        Gamepads.gamepad1().leftBumper()
                 .whenBecomesTrue(() -> {
                     Intake.INSTANCE.out().schedule();
                 })
@@ -131,28 +118,29 @@ public class DriverControlled extends NextFTCOpMode {
                     Intake.INSTANCE.stop().schedule();
                 });
 
-        Gamepads.gamepad1().dpadLeft()
+        Gamepads.gamepad1().leftBumper()
                 .whenBecomesTrue(() -> {
-                    Turret.INSTANCE.turnByDegrees(90).schedule();
+                    Intake.INSTANCE.in().schedule();
                 })
                 .whenBecomesFalse(() -> {
-                    Turret.INSTANCE.stop().schedule();
+                    Intake.INSTANCE.stop().schedule();
                 });
+
+        Gamepads.gamepad1().dpadLeft()
+                .whenBecomesTrue(() -> {
+                    Flicker.INSTANCE.down1().schedule();
+                });
+
 
         Gamepads.gamepad1().dpadRight()
                 .whenBecomesTrue(() -> {
-                    Turret.INSTANCE.turnByDegrees(-90).schedule();
-                })
-                .whenBecomesFalse(() -> {
-                    Turret.INSTANCE.stop().schedule();
+                    Flicker.INSTANCE.up1().schedule();
                 });
 
-        Gamepads.gamepad1().dpadDown()
+
+        Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(() -> {
-                    Turret.INSTANCE.goToZero().schedule();
-                })
-                .whenBecomesFalse(() -> {
-                    Turret.INSTANCE.stop().schedule();
+                    Flicker.INSTANCE.flick1().schedule();
                 });
 
         Gamepads.gamepad1().x()
