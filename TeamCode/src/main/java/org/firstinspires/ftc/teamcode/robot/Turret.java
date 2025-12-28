@@ -5,6 +5,7 @@ import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.controllable.RunToPosition;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.powerable.SetPower;
@@ -14,13 +15,17 @@ public class Turret implements Subsystem {
     public static double kP = 0.005;
     public static double kI = 0;
     public static double kD = 0;
+    public static double kV = 0.025;
+    public static double kA = 0.02;
+    public static double kS = 0.03;
     public static double velocity = 0.5;
     public static double positionPerDegree = 10.35;
     public static boolean powerState = false;
 
     private final ControlSystem controller = ControlSystem.builder()
-            .velPid(kP, kI, kD)
-            .elevatorFF(0)
+            .posPid(kP, kI, kD)
+            //.basicFF()
+            .basicFF(kV, kA, kS)
             .build();
 
     public static final Turret INSTANCE = new Turret();
@@ -31,14 +36,14 @@ public class Turret implements Subsystem {
 
     public Command turnRight() {
         return new SequentialGroup(
-                new InstantCommand(() -> powerState = true),
+                new InstantCommand(() -> powerState = false),
                 new SetPower(turretMotor, velocity)
         ).requires(this);
     }
 
     public Command turnLeft(){
         return new SequentialGroup(
-            new InstantCommand(() -> powerState = true),
+            new InstantCommand(() -> powerState = false),
             new SetPower(turretMotor, -1 * velocity)
         ).requires(this);
     }
@@ -53,7 +58,7 @@ public class Turret implements Subsystem {
     public Command goToZero(){
         return new SequentialGroup(
                 new InstantCommand(() -> powerState = true),
-                new RunToPosition(controller, 0).requires(this)
+                new RunToPosition(controller, 0)
         ).requires(this);
     }
 
@@ -73,5 +78,8 @@ public class Turret implements Subsystem {
         if(powerState) {
             turretMotor.setPower(controller.calculate(turretMotor.getState()));
         }
+        ActiveOpMode.telemetry().addData("powerState", powerState);
+        ActiveOpMode.telemetry().addData("calculated power", controller.calculate(turretMotor.getState()));
+        ActiveOpMode.telemetry().update();
     }
 }

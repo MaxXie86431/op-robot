@@ -26,10 +26,16 @@ public class Intake implements Subsystem {
 
     private Intake() {}
 
-    public Command in(){ return new SetPower(intakeMotor, 1); }
+    public Command in(){
+        return new SetPower(intakeMotor, 1).requires(this);
+    }
 
-    public Command out(){ return new SetPower(intakeMotor, -1); }
+    public Command out(){
+        return new SetPower(intakeMotor, -1).requires(this);
+    }
 
-    public Command stop(){ return new SetPower(intakeMotor, 0); }
+    public Command stop(){
+        return new SetPower(intakeMotor, 0).requires(this);
+    }
 
 }

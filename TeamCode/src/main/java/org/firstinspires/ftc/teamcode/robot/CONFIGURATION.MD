@@ -6,8 +6,7 @@
 - 3 = Turret-Gear
 
 ## Servos:
-- 0 = Flicker-3-1
-- 1 = Flicker-3-3
+- 0 = Flicker2
 
 # Control Hub
 ## Motors: 
@@ -16,8 +15,6 @@
 - 2 = Bottom-Left-Motor
 - 3 = Top-Left-Motor
 
-## Servos: 
-- 0 = Flicker-1
-- 1 = Flicker-2-3
-- 2 = Flicker-2-1
-- 
+## Servos:
+- 0 = Flicker1
+- 1 = Flicker3
