@@ -1,0 +1,76 @@
+package org.firstinspires.ftc.teamcode.robot;
+
+import dev.nextftc.control.ControlSystem;
+import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
+import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.hardware.controllable.RunToPosition;
+import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.powerable.SetPower;
+
+public class Turret implements Subsystem {
+
+    public static double kP = 0.005;
+    public static double kI = 0;
+    public static double kD = 0;
+    public static double velocity = 0.5;
+    public static double positionPerDegree = 10.35;
+    public static boolean powerState = false;
+
+    private final ControlSystem controller = ControlSystem.builder()
+            .velPid(kP, kI, kD)
+            .elevatorFF(0)
+            .build();
+
+    public static final Turret INSTANCE = new Turret();
+
+    private static final MotorEx turretMotor = new MotorEx("Turret-Gear").reversed();
+
+    private Turret() {}
+
+    public Command turnRight() {
+        return new SequentialGroup(
+                new InstantCommand(() -> powerState = true),
+                new SetPower(turretMotor, velocity)
+        ).requires(this);
+    }
+
+    public Command turnLeft(){
+        return new SequentialGroup(
+            new InstantCommand(() -> powerState = true),
+            new SetPower(turretMotor, -1 * velocity)
+        ).requires(this);
+    }
+
+    public Command stop(){
+        return new SequentialGroup(
+            new InstantCommand(() -> powerState = false),
+            new SetPower(turretMotor, 0)
+        ).requires(this);
+    }
+
+    public Command goToZero(){
+        return new SequentialGroup(
+                new InstantCommand(() -> powerState = true),
+                new RunToPosition(controller, 0).requires(this)
+        ).requires(this);
+    }
+
+    public Command turnByDegrees(double degrees){
+        return new SequentialGroup(
+            new InstantCommand(() -> powerState = true),
+            new RunToPosition(controller, turretMotor.getCurrentPosition()  + degrees * positionPerDegree).requires(this)
+        ).requires(this);
+    }
+
+    public double getEncoderValue(){
+        return turretMotor.getCurrentPosition();
+    }
+
+    @Override
+    public void periodic() {
+        if(powerState)
+            turretMotor.setPower(controller.calculate(turretMotor.getState()));
+    }
+}
