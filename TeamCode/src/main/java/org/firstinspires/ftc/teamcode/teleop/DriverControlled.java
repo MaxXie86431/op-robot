@@ -112,12 +112,12 @@ public class DriverControlled extends NextFTCOpMode {
                 });
 
         Gamepads.gamepad1().dpadUp().whenBecomesTrue(() -> {
-            Intake.INSTANCE.takeIn().schedule();
+            Intake.INSTANCE.in().schedule();
         });
 
         Gamepads.gamepad1().leftTrigger().greaterThan(0.2)
                 .whenBecomesTrue(() -> {
-                    Intake.INSTANCE.takeIn().schedule();
+                    Intake.INSTANCE.in().schedule();
                 })
                 .whenBecomesFalse(() -> {
                     Intake.INSTANCE.stop().schedule();
@@ -125,7 +125,7 @@ public class DriverControlled extends NextFTCOpMode {
 
         Gamepads.gamepad1().leftBumper()
                 .whenBecomesTrue(() -> {
-                    Intake.INSTANCE.takeOut().schedule();
+                    Intake.INSTANCE.out().schedule();
                 })
                 .whenBecomesFalse(() -> {
                     Intake.INSTANCE.stop().schedule();

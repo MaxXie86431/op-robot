@@ -60,7 +60,7 @@ public class Turret implements Subsystem {
     public Command turnByDegrees(double degrees){
         return new SequentialGroup(
             new InstantCommand(() -> powerState = true),
-            new RunToPosition(controller, turretMotor.getCurrentPosition()  + degrees * positionPerDegree).requires(this)
+            new RunToPosition(controller, turretMotor.getCurrentPosition()  + degrees * positionPerDegree)
         ).requires(this);
     }
 
@@ -70,7 +70,8 @@ public class Turret implements Subsystem {
 
     @Override
     public void periodic() {
-        if(powerState)
+        if(powerState) {
             turretMotor.setPower(controller.calculate(turretMotor.getState()));
+        }
     }
 }

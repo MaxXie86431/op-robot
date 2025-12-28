@@ -94,4 +94,31 @@ public class Limelight implements Subsystem {
         );
     }
 
+    public String color() {
+        LLResult result = ll.getLatestResult();
+        if (result != null && result.isValid()) {
+            List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
+            for (LLResultTypes.FiducialResult fiducial : fiducials) {
+                int id = fiducial.getFiducialId();
+                if (id == 21){
+                    ActiveOpMode.telemetry().addData("Fiducial " + id, "Green, Purple, Purple");
+                    ActiveOpMode.telemetry().update();
+                    return "gpp";
+                } else if (id == 22){
+                    ActiveOpMode.telemetry().addData("Fiducial " + id, "Purple, Green, Purple");
+                    ActiveOpMode.telemetry().update();
+                    return "pgp";
+                } else if (id == 23){
+                    ActiveOpMode.telemetry().addData("Fiducial " + id, "Purple, Purple, Green");
+                    ActiveOpMode.telemetry().update();
+                    return "ppg";
+                } else {
+                    ActiveOpMode.telemetry().addData("not seeing", "null");
+                    ActiveOpMode.telemetry().update();
+                }
+            }
+        }
+        return null;
+    }
+
 }

@@ -26,9 +26,9 @@ public class Intake implements Subsystem {
 
     private Intake() {}
 
-    public Command takeIn(){ return new SetPower(intakeMotor, 1); }
+    public Command in(){ return new SetPower(intakeMotor, 1); }
 
-    public Command takeOut(){ return new SetPower(intakeMotor, -1); }
+    public Command out(){ return new SetPower(intakeMotor, -1); }
 
     public Command stop(){ return new SetPower(intakeMotor, 0); }
 

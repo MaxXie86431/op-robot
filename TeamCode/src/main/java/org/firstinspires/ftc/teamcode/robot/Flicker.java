@@ -18,8 +18,20 @@ public class Flicker implements Subsystem {
     public static final Flicker INSTANCE = new Flicker();
     private final ServoEx servo= new ServoEx("Flicker-2-3");;
 
-    public Command closeServo = new SetPosition(servo, 0).requires(this);
-    public Command openServo = new SetPosition(servo, 0.8).requires(this);
+    public Command down() {
+        return  new SetPosition(servo, 0).requires(this);
+    }
+    public Command up() {
+        return new SetPosition(servo, 0.8).requires(this);
+    }
+
+    public Command flick() {
+        return new SequentialGroup(
+                up(),
+                down()
+        );
+    }
+
 
 
 }
