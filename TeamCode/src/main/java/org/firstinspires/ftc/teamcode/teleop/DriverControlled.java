@@ -140,7 +140,12 @@ public class DriverControlled extends NextFTCOpMode {
 
         Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.flick1().schedule();
+                    Flicker.INSTANCE.up2().schedule();
+                });
+
+        Gamepads.gamepad1().dpadDown()
+                .whenBecomesTrue(() -> {
+                    Flicker.INSTANCE.down2().schedule();
                 });
 
         Gamepads.gamepad1().x()

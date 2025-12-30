@@ -73,13 +73,19 @@ public class Turret implements Subsystem {
         return turretMotor.getCurrentPosition();
     }
 
+    public Command autoTrack() {
+        double angle = Limelight.INSTANCE.calculateAlignmentAngle();
+        return new SequentialGroup(
+                new InstantCommand(() -> powerState = true),
+                new RunToPosition(controller, turretMotor.getCurrentPosition()  + angle * positionPerDegree)
+        ).requires(this);
+    }
+
     @Override
     public void periodic() {
         if(powerState) {
+            autoTrack();
             turretMotor.setPower(controller.calculate(turretMotor.getState()));
         }
-        ActiveOpMode.telemetry().addData("powerState", powerState);
-        ActiveOpMode.telemetry().addData("calculated power", controller.calculate(turretMotor.getState()));
-        ActiveOpMode.telemetry().update();
     }
 }
