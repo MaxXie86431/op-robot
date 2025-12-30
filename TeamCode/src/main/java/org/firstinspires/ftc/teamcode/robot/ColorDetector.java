@@ -7,6 +7,7 @@ import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 
 public class ColorDetector implements Subsystem {
+    public static final ColorDetector INSTANCE = new ColorDetector();
     private ColorSensor colorSensor3;
 
 
@@ -17,6 +18,10 @@ public class ColorDetector implements Subsystem {
 
     public boolean isGreen(){
         return colorSensor3.green()>180;
+    }
+
+    public boolean isPurple(){
+        return colorSensor3.red()>100 && colorSensor3.blue()>100;
     }
 
 

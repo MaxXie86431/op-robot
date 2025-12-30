@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.robot.ColorDetector;
 import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
@@ -50,7 +51,7 @@ public class DriverControlled extends NextFTCOpMode {
     public DriverControlled() {
         addComponents(
                 // new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(Flywheel.INSTANCE, Intake.INSTANCE, Flicker.INSTANCE, Turret.INSTANCE),
+                new SubsystemComponent(Flywheel.INSTANCE, Intake.INSTANCE, Flicker.INSTANCE, Turret.INSTANCE, ColorDetector.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE);
     }
@@ -73,11 +74,14 @@ public class DriverControlled extends NextFTCOpMode {
         telemetry.addData("Goal Velocity inside subsystem: ", Flywheel.launchVelocity); // goalVelocity);
         telemetry.addData("Encoder Value of Turret: ", Turret.INSTANCE.getEncoderValue());
 
-        telemetry.update();
-        super.onUpdate();
+
 
          */
-
+        telemetry.addData("", ColorDetector.INSTANCE.getColorValues());
+        telemetry.addData("Is it green", ColorDetector.INSTANCE.isGreen());
+        telemetry.addData("Is it purple", ColorDetector.INSTANCE.isPurple());
+        telemetry.update();
+        super.onUpdate();
     }
 
     @Override
@@ -140,12 +144,7 @@ public class DriverControlled extends NextFTCOpMode {
 
         Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.up2().schedule();
-                });
-
-        Gamepads.gamepad1().dpadDown()
-                .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.down2().schedule();
+                    Flicker.INSTANCE.flick1().schedule();
                 });
 
         Gamepads.gamepad1().x()
