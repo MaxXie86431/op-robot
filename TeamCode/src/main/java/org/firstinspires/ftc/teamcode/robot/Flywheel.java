@@ -35,12 +35,16 @@ public class Flywheel implements Subsystem{
 
     public static final Flywheel INSTANCE = new Flywheel();
     private Flywheel() { }
-    private final MotorEx motor = new MotorEx("Flywheel").reversed();
+    private MotorEx motor;
     private static final double TICKS_PER_REVOLUTION = 2240.0;
     public static int outVelocity = 1200;
     public static int inVelocity = -1000;
     public static double launchBuffer = 2;
 
+    @Override
+    public void initialize() {
+        motor = new MotorEx("Flywheel").reversed();
+    }
     public double getVelocityRPM(){
         double ticksPerSecond = motor.getVelocity();
         /*double revPerSec = ticksPerSecond / TICKS_PER_REVOLUTION;

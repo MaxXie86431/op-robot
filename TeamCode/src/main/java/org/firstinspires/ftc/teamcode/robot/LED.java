@@ -8,6 +8,7 @@ import dev.nextftc.hardware.positionable.SetPosition;
 public class LED implements Subsystem {
 
     public static final LED INSTANCE = new LED();
+    private LED() {}
     public final ServoEx led = new ServoEx("LED");
 
     public Command off(){return new SetPosition(led, 0).requires(this);}

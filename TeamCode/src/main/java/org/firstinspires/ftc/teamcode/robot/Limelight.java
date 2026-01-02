@@ -70,18 +70,19 @@ public class Limelight implements Subsystem {
     public double calculateAlignmentAngle() {
         LLResult result = ll.getLatestResult();
         if (result != null && result.isValid()) {
+            return result.getTx();
+            /* 
             List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
             for (LLResultTypes.FiducialResult fiducial : fiducials) {
                 int id = fiducial.getFiducialId();
                 if (id == 20 || id == 24) {
 
-                    angleForAlignment = fiducial.getTargetXDegrees(); 
-                    //Command turn_ = turns(anglefactor * camera_angle_to_target);
-                    //telemetry.update();
-                    //turn_.schedule();
-                    return angleFactor * angleForAlignment;
+                    angleForAlignment = fiducial.getTargetXDegrees();
+                    return angleForAlignment;
                 }
             }
+                */
+
         }
         return 0;
     }
@@ -90,7 +91,7 @@ public class Limelight implements Subsystem {
         double angle = calculateAlignmentAngle();
         return new ParallelDeadlineGroup(
                 new Delay(llDelay),
-                new TurnBy(Angle.fromDeg(angle))
+                new TurnBy(Angle.fromDeg(angle*angleFactor))
         );
     }
 

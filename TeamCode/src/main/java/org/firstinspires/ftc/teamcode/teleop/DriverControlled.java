@@ -30,8 +30,10 @@ import dev.nextftc.hardware.driving.DriverControlledCommand;
 @Configurable
 @TeleOp(name = "Driver Control")
 public class DriverControlled extends NextFTCOpMode {
+    //left is up right is down rn
     public static double llDelay = 1.25;
     public static double speed = 0.6;
+    public static boolean turret = false;
 
     private DriverControlledCommand driverControlled = new PedroDriverControlled(
             Gamepads.gamepad1().leftStickY().negate(),
@@ -65,18 +67,19 @@ public class DriverControlled extends NextFTCOpMode {
          * telemetry.addData("Distance from goal", distance_from_camera_to_target);
          * telemetry.update();
          * super.onUpdate();
-         */
 
-        /*
+
+
         telemetry.addData("Velocity RPM", Flywheel.INSTANCE.getVelocityRPM());
         telemetry.addData("Distance from goal inside subsystem", Flywheel.distanceToGoal); // Flywheel.INSTANCE.distance);
         telemetry.addData("Goal Velocity inside subsystem: ", Flywheel.launchVelocity); // goalVelocity);
         telemetry.addData("Encoder Value of Turret: ", Turret.INSTANCE.getEncoderValue());
-
+        */
+        telemetry.addData("encoder value", Turret.INSTANCE.getEncoderValue());
         telemetry.update();
         super.onUpdate();
 
-         */
+
 
     }
 
@@ -85,6 +88,7 @@ public class DriverControlled extends NextFTCOpMode {
         Flywheel.powerState = false;
         Turret.powerState = false;
         Flicker.INSTANCE.allDown();
+        Turret.INSTANCE.zeroEncoderValue();
 
     }
 
@@ -98,6 +102,9 @@ public class DriverControlled extends NextFTCOpMode {
          */
         // driverControlled.setScalar(speed);
         // driverControlled.schedule();
+        if (turret) {
+            Turret.INSTANCE.autoTrack.schedule();
+        }
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.2)
                 .whenBecomesTrue(() -> {
@@ -126,27 +133,7 @@ public class DriverControlled extends NextFTCOpMode {
                     Intake.INSTANCE.stop().schedule();
                 });
 
-        Gamepads.gamepad1().dpadLeft()
-                .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.down1().schedule();
-                });
 
-
-        Gamepads.gamepad1().dpadRight()
-                .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.up1().schedule();
-                });
-
-
-        Gamepads.gamepad1().dpadUp()
-                .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.up2().schedule();
-                });
-
-        Gamepads.gamepad1().dpadDown()
-                .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.down2().schedule();
-                });
 
         Gamepads.gamepad1().x()
                 .whenBecomesTrue(() -> {
@@ -165,5 +152,8 @@ public class DriverControlled extends NextFTCOpMode {
                     Turret.INSTANCE.stop().schedule();
                 });
         ;
+
     }
+
+
 }
