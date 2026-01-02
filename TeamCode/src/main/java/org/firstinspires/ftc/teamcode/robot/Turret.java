@@ -84,6 +84,7 @@ public class Turret implements Subsystem {
         return turretMotor.getCurrentPosition();
     }
 
+
     public void zeroEncoderValue() {
         turretMotor.setCurrentPosition(0);
     }
@@ -123,5 +124,6 @@ public class Turret implements Subsystem {
         else {
 
         }
+
     }
 }

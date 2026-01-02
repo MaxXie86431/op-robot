@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
-import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -20,7 +19,6 @@ import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
 
-@Configurable
 public class Flicker implements Subsystem {
 
     public static final Flicker INSTANCE = new Flicker();

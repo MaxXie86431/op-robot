@@ -29,6 +29,10 @@ public class ColorDetector implements Subsystem {
         return sensor.red()>100 && sensor.blue()>100;
     }
 
+    public boolean isPurple(){
+        return colorSensor3.red()>100 && colorSensor3.blue()>100;
+    }
+
 
     public String getSensorTelemetry(ColorSensor sensor){
         return "R: " + sensor.red() + " G: " + sensor.green() + " B: " + sensor.blue();
