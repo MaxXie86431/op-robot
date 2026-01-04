@@ -52,8 +52,8 @@ public class DriverControlled extends NextFTCOpMode {
 
     public DriverControlled() {
         addComponents(
-                // new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(Flywheel.INSTANCE, Intake.INSTANCE, Flicker.INSTANCE, Turret.INSTANCE, ColorDetector.INSTANCE),
+                new PedroComponent(Constants::createFollower),
+                new SubsystemComponent(Flywheel.INSTANCE, Intake.INSTANCE, Flicker.INSTANCE, Turret.INSTANCE, Limelight.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE);
     }
@@ -101,8 +101,8 @@ public class DriverControlled extends NextFTCOpMode {
          * Cross (a)
          * Circle (b)
          */
-        // driverControlled.setScalar(speed);
-        // driverControlled.schedule();
+        driverControlled.setScalar(speed);
+        driverControlled.schedule();
         if (turret) {
             Turret.INSTANCE.autoTrack.schedule();
         }
@@ -153,8 +153,22 @@ public class DriverControlled extends NextFTCOpMode {
                     Turret.INSTANCE.stop().schedule();
                 });
         ;
+        Gamepads.gamepad1().a()
+                .whenBecomesTrue(() -> {
+                    Flicker.INSTANCE.flickup2().schedule();
+                });
+        Gamepads.gamepad1().b()
+                .whenBecomesTrue(() -> {
+                    Flicker.INSTANCE.flickdown2().schedule();
+                });
+
+        Gamepads.gamepad1().dpadUp()
+                .whenBecomesTrue(() -> {
+                    Turret.INSTANCE.autoTrackButton().schedule();
+                });
 
     }
+
 
 
 }

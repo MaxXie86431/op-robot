@@ -7,6 +7,7 @@ import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
+import dev.nextftc.core.commands.utility.NullCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.controllable.RunToPosition;
@@ -99,6 +100,18 @@ public class Turret implements Subsystem {
     }
     */
 
+    public Command autoTrackButton() {
+        double angle = Limelight.INSTANCE.calculateAlignmentAngle();
+        if (angle != 0) {
+            double targetPosition = turretMotor.getCurrentPosition() + angle * positionPerDegree;
+            return new SequentialGroup(
+                    new InstantCommand(() -> powerState = true),
+                    new RunToPosition(controller, targetPosition)
+            );
+
+        }
+        return new NullCommand();
+    }
     public Command autoTrack = new LambdaCommand()
     .setStart(() -> {
         powerState = true;

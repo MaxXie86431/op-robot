@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -19,6 +20,7 @@ import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
 
+@Configurable
 public class Flicker implements Subsystem {
 
     public static final Flicker INSTANCE = new Flicker();
@@ -26,32 +28,53 @@ public class Flicker implements Subsystem {
     private final ServoEx servo2= new ServoEx("Flicker2");
     private final ServoEx servo3= new ServoEx("Flicker3");
     public static double pos = 0.5;
+    public static double flickDelay = 1;
     private static String flicked = "";
+    public static double up1 = 0.55;
+    public static double down1 = 0.1;
+    public static double up2 = 0.32;
+    public static double down2 = 0.82;
+    public static double up3 = 0.7;
+    public static double down3 = 0.95;
 
 
     public Command flick1() {
         return new SequentialGroup(
-                new SetPosition(servo1, 1),
-                new Delay(0.5),
-                new SetPosition(servo1, 0)
+                new SetPosition(servo1, up1),
+                new Delay(flickDelay),
+                new SetPosition(servo1, down1)
         );
     }
 
     public Command flick2() {
         return new SequentialGroup(
-                new SetPosition(servo2, 1),
-                new Delay(0.5),
-                new SetPosition(servo2, 0)
+                new SetPosition(servo2, up2),
+                new Delay(flickDelay),
+                new SetPosition(servo2, down2)
+        );
+    }
+
+    public Command flickup2() {
+        return new SequentialGroup(
+                new SetPosition(servo2, up2)
+        );
+    }
+
+    public Command flickdown2() {
+        return new SequentialGroup(
+                new SetPosition(servo2, down2)
         );
     }
 
     public Command flick3() {
         return new SequentialGroup(
-                new SetPosition(servo3, 1),
-                new Delay(0.5),
-                new SetPosition(servo3, 0)
+                new SetPosition(servo3, up3),
+                new Delay(flickDelay),
+                new SetPosition(servo3, down3)
         );
     }
+
+
 
    public Command chooseFlick(int pos) {
         if (pos == 1) {
