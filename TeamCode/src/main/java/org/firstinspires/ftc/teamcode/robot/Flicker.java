@@ -65,21 +65,21 @@ public class Flicker implements Subsystem {
         );
     }
 
-    public Command flick1Switch(){
+    public Command flick1Switch() {
         if(flick1Up)
             return flickdown1();
         else
             return flickup1();
     }
 
-    public Command flick2Switch(){
+    public Command flick2Switch() {
         if(flick2Up)
             return flickdown2();
         else
             return flickup2();
     }
 
-    public Command flick3Switch(){
+    public Command flick3Switch() {
         if(flick3Up)
             return flickdown3();
         else
