@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.robot.ColorDetector;
 import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
+import org.firstinspires.ftc.teamcode.robot.LED;
 import org.firstinspires.ftc.teamcode.robot.Launcher;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.Limelight;
@@ -53,7 +54,7 @@ public class DriverControlled extends NextFTCOpMode {
     public DriverControlled() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(Flywheel.INSTANCE, Intake.INSTANCE, Flicker.INSTANCE, Turret.INSTANCE, Limelight.INSTANCE),
+                new SubsystemComponent(Flywheel.INSTANCE, Intake.INSTANCE, Flicker.INSTANCE, Turret.INSTANCE, Limelight.INSTANCE, LED.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE);
     }
@@ -115,9 +116,6 @@ public class DriverControlled extends NextFTCOpMode {
                     Flywheel.INSTANCE.shutdown().schedule();
                 });
 
-
-
-
         Gamepads.gamepad1().leftTrigger().greaterThan(0.2)
                 .whenBecomesTrue(() -> {
                     Intake.INSTANCE.out().schedule();
@@ -138,28 +136,18 @@ public class DriverControlled extends NextFTCOpMode {
 
         Gamepads.gamepad1().x()
                 .whenBecomesTrue(() -> {
-                    Turret.INSTANCE.turnLeft().schedule();
-                })
-                .whenBecomesFalse(() -> {
-                    Turret.INSTANCE.stop().schedule();
+                    Flicker.INSTANCE.flick1().schedule();
                 });
-        ;
+
 
         Gamepads.gamepad1().y()
                 .whenBecomesTrue(() -> {
-                    Turret.INSTANCE.turnRight().schedule();
-                })
-                .whenBecomesFalse(() -> {
-                    Turret.INSTANCE.stop().schedule();
+                    Flicker.INSTANCE.flick2().schedule();
                 });
-        ;
-        Gamepads.gamepad1().a()
-                .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.flickup2().schedule();
-                });
+
         Gamepads.gamepad1().b()
                 .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.flickdown2().schedule();
+                    Flicker.INSTANCE.flick3().schedule();
                 });
 
         Gamepads.gamepad1().dpadUp()
@@ -167,8 +155,19 @@ public class DriverControlled extends NextFTCOpMode {
                     Turret.INSTANCE.autoTrackButton().schedule();
                 });
 
+        Gamepads.gamepad1().dpadLeft()
+                .whenBecomesTrue(() -> {
+                    Turret.INSTANCE.turnLeft().schedule();
+                })
+                .whenBecomesFalse(() -> {
+                    Turret.INSTANCE.stop().schedule();
+                });
+        Gamepads.gamepad1().dpadRight()
+                .whenBecomesTrue(() -> {
+                    Turret.INSTANCE.turnRight().schedule();
+                })
+                .whenBecomesFalse(() -> {
+                    Turret.INSTANCE.stop().schedule();
+                });
     }
-
-
-
 }

@@ -19,3 +19,7 @@
 - 4 = Flicker1 (Exapansion)
 - 0 = Flicker2 (Control)
 - 5 = Flicker3 (Expansion)
+ ## Color Sensors:
+- Digital 4.5 = Color Sensor 1 (Control hub)
+- Digital 0.1 = Color Sensor 2 (Control hub)
+- Digital 2.3 = Color Sensor 3 (Control hub)
