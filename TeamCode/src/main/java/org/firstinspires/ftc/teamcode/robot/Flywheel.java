@@ -6,6 +6,7 @@ import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.commands.utility.NullCommand;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -39,6 +40,7 @@ public class Flywheel implements Subsystem{
     public static int inVelocity = -1000;
     public static double launchBuffer = 2;
     public static double launchPower;
+    private double currentTargetVelocity = 0;
 
     @Override
     public void initialize() {
@@ -95,6 +97,13 @@ public class Flywheel implements Subsystem{
         ).requires(this);
     }
 
+    public Command outPower() {
+        //double ticksPerSecond = velocity * TICKS_PER_REVOLUTION / 60.0;
+        return new SequentialGroup(
+                new InstantCommand(() -> powerState = true),
+                new SetPower(motor, launchPower)
+        ).requires(this);
+    }
 
     @Override
     public void periodic() {
