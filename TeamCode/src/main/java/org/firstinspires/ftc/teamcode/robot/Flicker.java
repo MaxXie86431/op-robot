@@ -31,11 +31,14 @@ public class Flicker implements Subsystem {
     public static double flickDelay = 1;
     private static String flicked = "";
     public static double up1 = 0.55;
-    public static double down1 = 0.1;
+    public static double down1 = 0.03;
     public static double up2 = 0.32;
-    public static double down2 = 0.82;
+    public static double down2 = 0.94;
     public static double up3 = 0.7;
     public static double down3 = 0.95;
+    public static boolean flick1Up = false;
+    public static boolean flick2Up = false;
+    public static boolean flick3Up = false;
 
 
     public Command flick1() {
@@ -54,15 +57,66 @@ public class Flicker implements Subsystem {
         );
     }
 
+    public Command flick1Switch(){
+        if(flick1Up)
+            return flickdown1();
+        else
+            return flickup1();
+    }
+
+    public Command flick2Switch(){
+        if(flick2Up)
+            return flickdown2();
+        else
+            return flickup2();
+    }
+
+    public Command flick3Switch(){
+        if(flick3Up)
+            return flickdown3();
+        else
+            return flickup3();
+    }
+
+    public Command flickup1() {
+        flick1Up = true;
+        return new SequentialGroup(
+                new SetPosition(servo1, up1)
+        );
+    }
+
+    public Command flickdown1() {
+        flick1Up = false;
+        return new SequentialGroup(
+                new SetPosition(servo1, down1)
+        );
+    }
+
     public Command flickup2() {
+        flick2Up = true;
         return new SequentialGroup(
                 new SetPosition(servo2, up2)
         );
     }
 
     public Command flickdown2() {
+        flick2Up = false;
         return new SequentialGroup(
                 new SetPosition(servo2, down2)
+        );
+    }
+
+    public Command flickup3() {
+        flick3Up = true;
+        return new SequentialGroup(
+                new SetPosition(servo3, up3)
+        );
+    }
+
+    public Command flickdown3() {
+        flick3Up = false;
+        return new SequentialGroup(
+                new SetPosition(servo3, down3)
         );
     }
 
