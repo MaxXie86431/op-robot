@@ -29,11 +29,11 @@ public class Intake implements Subsystem {
         if (!ColorDetector.INSTANCE.checkSlotsCapacity()){
             return null;
         }
-        return new SetPower(intakeMotor, 1).requires(this);
+        return new SetPower(intakeMotor, -1).requires(this);
     }
 
     public Command out(){
-        return new SetPower(intakeMotor, -1).requires(this);
+        return new SetPower(intakeMotor, 1).requires(this);
     }
 
     public Command stop(){

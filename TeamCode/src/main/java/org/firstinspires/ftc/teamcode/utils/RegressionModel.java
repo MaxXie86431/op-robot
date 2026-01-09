@@ -95,7 +95,7 @@ public class RegressionModel extends NextFTCOpMode {
         driverControlled.schedule();
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.2)
-                .whenBecomesTrue(() -> Flywheel.INSTANCE.outPower().schedule())
+                .whenBecomesTrue(() -> Flywheel.INSTANCE.regress().schedule())
                 .whenBecomesFalse(() -> Flywheel.INSTANCE.shutdown().schedule());
 
         Gamepads.gamepad1().rightBumper()

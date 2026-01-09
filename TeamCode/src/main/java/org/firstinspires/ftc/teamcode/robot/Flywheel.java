@@ -45,7 +45,7 @@ public class Flywheel implements Subsystem{
     @Override
     public void initialize() {
         launchPower = 0.8;
-        motor = new MotorEx("Flywheel").reversed();
+        motor = new MotorEx("Flywheel");//.reversed();
     }
     public double getVelocityRPM(){
         double ticksPerSecond = motor.getVelocity();
@@ -59,6 +59,13 @@ public class Flywheel implements Subsystem{
         return new SequentialGroup(
                 new InstantCommand(() -> powerState = true),
                 new RunToVelocity(controller, velocity, 20)
+        ).requires(this);
+    }
+
+    public Command regress() {
+        return new SequentialGroup(
+                new InstantCommand(() -> powerState = true),
+                new RunToVelocity(controller, getPower() * 2000, 20)
         ).requires(this);
     }
 
@@ -76,9 +83,9 @@ public class Flywheel implements Subsystem{
     }
 
     public Command shootOut() {
-        //double[] values = Limelight.INSTANCE.calculateLaunchPower();
-        //distanceToGoal = values[0];
-        launchVelocity = 1100;
+        double[] values = Limelight.INSTANCE.calculateLaunchPower();
+        distanceToGoal = values[0];
+        launchVelocity = values[1];
         if (launchVelocity==0) {
             return new NullCommand();
         }
@@ -125,6 +132,10 @@ public class Flywheel implements Subsystem{
                 launchPower -= 0.025;
             }
         });
+    }
+
+    public double getPower() {
+        return launchPower;
     }
 
 

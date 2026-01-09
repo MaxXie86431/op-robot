@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.robot.ColorDetector;
 import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
@@ -31,7 +32,6 @@ import dev.nextftc.hardware.driving.DriverControlledCommand;
 public class DriverControlled extends NextFTCOpMode {
     //left is up right is down rn
     public static double llDelay = 1.25;
-    public static double speed = 0.6;
     public static boolean turret = false;
 
     private DriverControlledCommand driverControlled = new PedroDriverControlled(
@@ -51,7 +51,7 @@ public class DriverControlled extends NextFTCOpMode {
     public DriverControlled() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(Flywheel.INSTANCE, Intake.INSTANCE, Flicker.INSTANCE, Turret.INSTANCE, Limelight.INSTANCE, LED.INSTANCE),
+                new SubsystemComponent(Flywheel.INSTANCE, Intake.INSTANCE, Flicker.INSTANCE, Turret.INSTANCE, Limelight.INSTANCE, LED.INSTANCE, ColorDetector.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE);
     }
@@ -59,13 +59,7 @@ public class DriverControlled extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         /*
-         * telemetry.addData("Far Launch Power", farLaunchPower);
-         * telemetry.addData("Close Launch Power", closeLaunchPower);
-         * telemetry.addData("Target X", angle);
-         * telemetry.addData("Target Y", angleToGoal);
-         * telemetry.addData("Distance from goal", distance_from_camera_to_target);
-         * telemetry.update();
-         * super.onUpdate();
+
 
 
 
@@ -74,6 +68,11 @@ public class DriverControlled extends NextFTCOpMode {
         telemetry.addData("Goal Velocity inside subsystem: ", Flywheel.launchVelocity); // goalVelocity);
         telemetry.addData("Encoder Value of Turret: ", Turret.INSTANCE.getEncoderValue());
         */
+        telemetry.addData("color sensors", "|"+ColorDetector.INSTANCE.getSensorValues()+"|");
+        telemetry.addData("Goal velocity", Limelight.goalVelocity);
+        telemetry.addData("LED is on", LED.on);
+        telemetry.addData("Distance from goal inside subsystem", Flywheel.distanceToGoal);
+        telemetry.addData("current RPM", Flywheel.INSTANCE.getVelocityRPM());
         telemetry.addData("encoder value", Turret.INSTANCE.getEncoderValue());
         telemetry.update();
         super.onUpdate();
@@ -99,7 +98,7 @@ public class DriverControlled extends NextFTCOpMode {
          * Cross (a)
          * Circle (b)
          */
-        driverControlled.setScalar(speed);
+        //driverControlled.setScalar(speed);
         driverControlled.schedule();
         if (turret) {
             Turret.INSTANCE.autoTrack.schedule();
@@ -115,7 +114,7 @@ public class DriverControlled extends NextFTCOpMode {
 
         Gamepads.gamepad1().leftTrigger().greaterThan(0.2)
                 .whenBecomesTrue(() -> {
-                    Intake.INSTANCE.out().schedule();
+                    Intake.INSTANCE.in().schedule();
                 })
                 .whenBecomesFalse(() -> {
                     Intake.INSTANCE.stop().schedule();
@@ -123,7 +122,7 @@ public class DriverControlled extends NextFTCOpMode {
 
         Gamepads.gamepad1().leftBumper()
                 .whenBecomesTrue(() -> {
-                    Intake.INSTANCE.in().schedule();
+                    Intake.INSTANCE.out().schedule();
                 })
                 .whenBecomesFalse(() -> {
                     Intake.INSTANCE.stop().schedule();
