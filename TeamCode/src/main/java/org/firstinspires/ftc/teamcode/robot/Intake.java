@@ -26,6 +26,9 @@ public class Intake implements Subsystem {
     private Intake() {}
 
     public Command in(){
+        if (!ColorDetector.INSTANCE.checkSlotsCapacity()){
+            return null;
+        }
         return new SetPower(intakeMotor, 1).requires(this);
     }
 

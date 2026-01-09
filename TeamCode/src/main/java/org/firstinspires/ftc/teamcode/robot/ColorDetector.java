@@ -67,5 +67,7 @@ public class ColorDetector implements Subsystem {
         return getColor(colorSensor1) + getColor(colorSensor2) + getColor(colorSensor3);
     }
 
-
+    public Boolean checkSlotsCapacity() {
+        return getSensorValues().indexOf(" ") >= 0;
+    }
 }

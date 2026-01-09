@@ -6,6 +6,7 @@ import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.commands.utility.NullCommand;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -28,7 +29,7 @@ public class Flywheel implements Subsystem{
 
     public static boolean powerState = false;
 
-    private final ControlSystem controller = ControlSystem.builder()
+    private ControlSystem controller = ControlSystem.builder()
             .velPid(kP, kI, kD)
             .basicFF(kV, kA, kS)
             .build();
@@ -36,13 +37,14 @@ public class Flywheel implements Subsystem{
     public static final Flywheel INSTANCE = new Flywheel();
     private Flywheel() { }
     private MotorEx motor;
-    private static final double TICKS_PER_REVOLUTION = 2240.0;
-    public static int outVelocity = 1200;
     public static int inVelocity = -1000;
     public static double launchBuffer = 2;
+    public static double launchPower;
+    private double currentTargetVelocity = 0;
 
     @Override
     public void initialize() {
+        launchPower = 0.8;
         motor = new MotorEx("Flywheel").reversed();
     }
     public double getVelocityRPM(){
@@ -95,10 +97,35 @@ public class Flywheel implements Subsystem{
         ).requires(this);
     }
 
+    public Command outPower() {
+        //double ticksPerSecond = velocity * TICKS_PER_REVOLUTION / 60.0;
+        return new SequentialGroup(
+                new InstantCommand(() -> powerState = true),
+                new SetPower(motor, launchPower)
+        ).requires(this);
+    }
 
     @Override
     public void periodic() {
         if(powerState)
             motor.setPower(controller.calculate(motor.getState()));
     }
+
+    public Command increasePower() {
+        return new InstantCommand(() -> {
+            if (launchPower<1) {
+                launchPower += 0.025;
+            } // change field here
+        });
+    }
+
+    public Command decreasePower() {
+        return new InstantCommand(() -> {
+            if (launchPower>0.05) {
+                launchPower -= 0.025;
+            }
+        });
+    }
+
+
 }

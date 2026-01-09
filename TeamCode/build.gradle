@@ -1,0 +1,36 @@
+//
+// build.gradle in TeamCode
+//
+
+apply from: '../build.common.gradle'
+apply from: '../build.dependencies.gradle'
+
+android {
+    namespace = 'org.firstinspires.ftc.teamcode'
+
+    compileSdk = 36
+
+    defaultConfig {
+        minSdkVersion 24
+        targetSdkVersion 30
+
+
+        versionCode 1000
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    packagingOptions {
+        jniLibs {
+            pickFirsts += ['**/*.so', '**/*.so']
+        }
+        jniLibs.useLegacyPackaging true
+    }
+}
+
+dependencies {
+    implementation project(':FtcRobotController')
+}
