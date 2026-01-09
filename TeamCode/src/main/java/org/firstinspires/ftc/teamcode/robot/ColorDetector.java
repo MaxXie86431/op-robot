@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 
+@Configurable
 public class ColorDetector implements Subsystem {
     public static final ColorDetector INSTANCE = new ColorDetector();
     private ColorDetector() {}
@@ -66,7 +68,8 @@ public class ColorDetector implements Subsystem {
     }
 
     public String getSensorValues() {
-        return getColor(colorSensor1) + getColor(colorSensor2) + getColor(colorSensor3);
+        //return getColor(colorSensor1) + getColor(colorSensor2) + getColor(colorSensor3);
+        return getSensorTelemetry(colorSensor1) + "\n" + getSensorTelemetry(colorSensor2) + "\n" + getSensorTelemetry(colorSensor3);
     }
 
     public Boolean checkSlotsCapacity() {

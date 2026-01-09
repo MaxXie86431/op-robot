@@ -31,10 +31,11 @@ public class Limelight implements Subsystem {
     
     private Limelight3A ll;
     private double distanceFromLimelightToGoal;
-    private double goalVelocity;
+    public static double goalVelocity;
     private double angleForAlignment;
-    public static double slope = 236.37959;
-    public static double constant = 941.20318;
+    public static double slope = 295.32082;
+    public static double constant = 902.26553;
+    public static double padding = 40;
 
     public static double angleFactor = -1.6;
     public static double llDelay = 1.25;
@@ -59,7 +60,7 @@ public class Limelight implements Subsystem {
                     double x = fiducial.getRobotPoseTargetSpace().getPosition().x;
                     double z = fiducial.getRobotPoseTargetSpace().getPosition().z;
                     distanceFromLimelightToGoal = Math.sqrt(x * x + z * z);
-                    goalVelocity = slope * distanceFromLimelightToGoal + constant;
+                    goalVelocity = slope * distanceFromLimelightToGoal + constant + padding;
                     return new double[]{distanceFromLimelightToGoal, goalVelocity};
                 }
             }
