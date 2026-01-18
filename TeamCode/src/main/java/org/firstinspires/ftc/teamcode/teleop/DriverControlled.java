@@ -61,17 +61,13 @@ public class DriverControlled extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         /*
-
-
-
-
         telemetry.addData("Velocity RPM", Flywheel.INSTANCE.getVelocityRPM());
         telemetry.addData("Distance from goal inside subsystem", Flywheel.distanceToGoal); // Flywheel.INSTANCE.distance);
         telemetry.addData("Goal Velocity inside subsystem: ", Flywheel.launchVelocity); // goalVelocity);
         telemetry.addData("Encoder Value of Turret: ", Turret.INSTANCE.getEncoderValue());
         */
 
-        telemetry.addData("`2q es i 9ik ", ColorDetector.INSTANCE.getSensorValues());
+        telemetry.addData("color sensor values", ColorDetector.INSTANCE.getSensorValues());
         telemetry.addData("Goal velocity", Limelight.goalVelocity);
         telemetry.addData("LED is on", LED.on);
         telemetry.addData("Distance from goal inside subsystem", Flywheel.distanceToGoal);
@@ -79,9 +75,6 @@ public class DriverControlled extends NextFTCOpMode {
         telemetry.addData("encoder value", Turret.INSTANCE.getEncoderValue());
         telemetry.update();
         super.onUpdate();
-
-
-
     }
 
     @Override

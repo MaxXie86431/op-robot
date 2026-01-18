@@ -139,7 +139,7 @@ public class turrettest extends NextFTCOpMode {
 
         Gamepads.gamepad1().dpadDown()
                 .whenBecomesTrue(() -> {
-                    Turret.INSTANCE.turnByDegrees(90).schedule();
+                    Turret.INSTANCE.autoTrackwTrig(PoseStorage.getPose(),Turret.INSTANCE.getEncoderValue());
                 });
 
     }

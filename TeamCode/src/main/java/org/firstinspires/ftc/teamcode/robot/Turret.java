@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.teleop.DriverControlled;
 
@@ -140,6 +141,14 @@ public class Turret implements Subsystem {
     .setIsDone(() -> false)
     .requires(this)
     .setInterruptible(true);
+
+    public Command autoTrackwTrig(Pose pose, double turretAngle) {
+        double angle = turretAngle;
+        double yPos = pose.getY();
+        double xPos = pose.getX();
+        angle += Math.atan((yPos-125)/(xPos-15));
+        return turnByDegrees(angle);
+    }
 
     @Override
     public void periodic() {
