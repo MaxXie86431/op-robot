@@ -34,7 +34,7 @@ public class Flicker implements Subsystem {
     public static double down1 = 0.03;
     public static double up2 = 0.32;
     public static double down2 = 0.94;
-    public static double up3 = 0.7;
+    public static double up3 = 0.65;
     public static double down3 = 0.95;
     public static boolean flick1Up = false;
     public static boolean flick2Up = false;

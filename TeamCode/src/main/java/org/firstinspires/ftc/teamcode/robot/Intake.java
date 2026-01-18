@@ -9,6 +9,7 @@ import com.pedropathing.paths.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.utility.NullCommand;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.SequentialGroup;
@@ -26,8 +27,8 @@ public class Intake implements Subsystem {
     private Intake() {}
 
     public Command in(){
-        if (!ColorDetector.INSTANCE.checkSlotsCapacity()){
-            return null;
+        if (!ColorDetector.INSTANCE.hasOpenSlots()){
+            return new NullCommand();
         }
         return new SetPower(intakeMotor, -1).requires(this);
     }

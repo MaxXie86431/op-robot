@@ -1,37 +1,29 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import android.graphics.Color;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.robot.ColorDetector;
 import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
-import org.firstinspires.ftc.teamcode.robot.LED;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.Limelight;
+import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.robot.Turret;
+import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
-import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
-import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
-import dev.nextftc.core.units.Angle;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.extensions.pedro.PedroDriverControlled;
-import dev.nextftc.extensions.pedro.TurnBy;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.DriverControlledCommand;
 
 @Configurable
-@TeleOp(name = "Driver Control")
-public class DriverControlled extends NextFTCOpMode {
+@TeleOp(name = "turret test")
+public class turrettest extends NextFTCOpMode {
     //left is up right is down rn
     public static double llDelay = 1.25;
     public static boolean turret = true;
@@ -41,57 +33,31 @@ public class DriverControlled extends NextFTCOpMode {
             Gamepads.gamepad1().leftStickX().negate(),
             Gamepads.gamepad1().rightStickX().negate());
 
-    private Command turns(double angle) {
-        return new SequentialGroup(
-                new ParallelDeadlineGroup(
-                        new Delay(llDelay),
-                        new TurnBy(Angle.fromDeg(angle))),
-                // Return control to driver after turn completes
-                driverControlled);
-    }
 
-    public DriverControlled() {
+    public turrettest() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(Flywheel.INSTANCE, Intake.INSTANCE, Flicker.INSTANCE, Turret.INSTANCE, Limelight.INSTANCE, LED.INSTANCE, ColorDetector.INSTANCE),
+                new SubsystemComponent(Flywheel.INSTANCE, Intake.INSTANCE, Flicker.INSTANCE, Turret.INSTANCE, Limelight.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE);
     }
 
     @Override
     public void onUpdate() {
-        /*
-
-
-
-
-        telemetry.addData("Velocity RPM", Flywheel.INSTANCE.getVelocityRPM());
-        telemetry.addData("Distance from goal inside subsystem", Flywheel.distanceToGoal); // Flywheel.INSTANCE.distance);
-        telemetry.addData("Goal Velocity inside subsystem: ", Flywheel.launchVelocity); // goalVelocity);
-        telemetry.addData("Encoder Value of Turret: ", Turret.INSTANCE.getEncoderValue());
-        */
-
-        telemetry.addData("`2q es i 9ik ", ColorDetector.INSTANCE.getSensorValues());
-        telemetry.addData("Goal velocity", Limelight.goalVelocity);
-        telemetry.addData("LED is on", LED.on);
-        telemetry.addData("Distance from goal inside subsystem", Flywheel.distanceToGoal);
-        telemetry.addData("current RPM", Flywheel.INSTANCE.getVelocityRPM());
-        telemetry.addData("encoder value", Turret.INSTANCE.getEncoderValue());
+        PoseStorage.setPose(follower().getPose());
+        telemetry.addData("Current Pose: ", PoseStorage.getPose());
+        telemetry.addData("Turret pos", Turret.INSTANCE.getEncoderValue());
         telemetry.update();
         super.onUpdate();
-
-
-
     }
 
     @Override
     public void onInit() {
-        turret = true;
         Flywheel.powerState = false;
         Turret.powerState = false;
         Flicker.INSTANCE.allDown();
         Turret.INSTANCE.setEncoderValue(0);
-
+        follower().setStartingPose(PoseStorage.getPose());
     }
 
     @Override
@@ -103,8 +69,8 @@ public class DriverControlled extends NextFTCOpMode {
          * Circle (b)
          */
         //driverControlled.setScalar(speed);
+
         driverControlled.schedule();
-        Turret.INSTANCE.autoTrack.schedule();
 
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.2)
@@ -149,14 +115,7 @@ public class DriverControlled extends NextFTCOpMode {
                     Flicker.INSTANCE.flick3().schedule();
                 });
 
-        Gamepads.gamepad1().dpadUp()
-                .toggleOnBecomesTrue()
-                .whenBecomesTrue(() -> {
-                    turret = true;
-                })
-                .whenBecomesFalse(()-> {
-                    turret = false;
-                 });
+
 
         Gamepads.gamepad1().dpadLeft()
                 .whenBecomesTrue(() -> {
@@ -172,5 +131,16 @@ public class DriverControlled extends NextFTCOpMode {
                 .whenBecomesFalse(() -> {
                     Turret.INSTANCE.stop().schedule();
                 });
+
+        Gamepads.gamepad1().dpadUp()
+                .whenBecomesTrue(() -> {
+                    Turret.INSTANCE.turnToDegrees(45).schedule();
+                });
+
+        Gamepads.gamepad1().dpadDown()
+                .whenBecomesTrue(() -> {
+                    Turret.INSTANCE.turnByDegrees(90).schedule();
+                });
+
     }
 }

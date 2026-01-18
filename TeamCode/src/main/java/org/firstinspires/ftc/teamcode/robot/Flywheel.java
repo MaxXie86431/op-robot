@@ -18,12 +18,12 @@ import dev.nextftc.core.commands.utility.InstantCommand;
 
 @Configurable
 public class Flywheel implements Subsystem{
-    public static double kP = 0.005;
-    public static double kI = 0.0175;
+    public static double kP = 0.025;
+    public static double kI = 0;
     public static double kD = 0.02;
-    public static double kV = 0.025;
+    public static double kV = 0.005;
     public static double kA = 0.02;
-    public static double kS = 0.03;
+    public static double kS = 0.01;
     public static double distanceToGoal = 0;
     public static double launchVelocity = 0;
 
@@ -44,7 +44,7 @@ public class Flywheel implements Subsystem{
 
     @Override
     public void initialize() {
-        launchPower = 0.8;
+        launchPower = 1;
         motor = new MotorEx("Flywheel");//.reversed();
     }
     public double getVelocityRPM(){

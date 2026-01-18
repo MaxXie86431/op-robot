@@ -119,6 +119,10 @@ public class RegressionModel extends NextFTCOpMode {
         Gamepads.gamepad1().dpadDown()
                 .whenBecomesTrue(Flywheel.INSTANCE.decreasePower());
 
+        Gamepads.gamepad1().dpadLeft()
+                .whenBecomesTrue(() -> Flywheel.INSTANCE.outPower().schedule())
+                .whenBecomesFalse(() -> Flywheel.INSTANCE.shutdown().schedule());
+
         Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(Flywheel.INSTANCE.increasePower());
 

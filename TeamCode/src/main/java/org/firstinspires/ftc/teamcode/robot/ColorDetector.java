@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 
@@ -14,6 +12,13 @@ public class ColorDetector implements Subsystem {
     private ColorSensor colorSensor1;
     private ColorSensor colorSensor2;
     private ColorSensor colorSensor3;
+    public static int green2 = 180;
+    public static int green3 = 1000;
+    public static int red2 = 100;
+    public static int blue2 = 100;
+    public static int red3 = 1000;
+    public static int blue3 = 1000;
+
 
 
     @Override
@@ -23,28 +28,37 @@ public class ColorDetector implements Subsystem {
         colorSensor3 = ActiveOpMode.hardwareMap().get(ColorSensor.class,"ColorSensor3");
     }
 
-    public boolean isGreen(ColorSensor sensor){
-        return sensor.green()>180;
+    public boolean isGreen(ColorSensor sensor, int num){
+        if (num == 2) {
+            return sensor.green()>green2;
+        }
+        else{
+            return sensor.green() > green3;
+        }
+
     }
 
-    public boolean isPurple(ColorSensor sensor) {
-        return sensor.red()>100 && sensor.blue()>100;
+    public boolean isPurple(ColorSensor sensor, int num) {
+        if (num == 2) {
+            return sensor.red()>red2 && sensor.blue()>blue2;
+        }
+        else {
+            return sensor.red() > red3 && sensor.blue() > blue3;
+        }
+
     }
 
-    public boolean isPurple(){
-        return colorSensor3.red()>100 && colorSensor3.blue()>100;
-    }
 
 
     public String getSensorTelemetry(ColorSensor sensor){
         return "R: " + sensor.red() + " G: " + sensor.green() + " B: " + sensor.blue();
     }
 
-    public String getColor(ColorSensor sensor) {
-        if (isGreen(sensor)) {
+    public String getColor(ColorSensor sensor, int num) {
+        if (isGreen(sensor, num)) {
             return "g";
         }
-        else if (isPurple(sensor)) {
+        else if (isPurple(sensor, num)) {
             return "p";
         }
         else {
@@ -54,13 +68,13 @@ public class ColorDetector implements Subsystem {
 
     public String chooseGetColor(int pos) {
         if (pos == 1) {
-            return getColor(colorSensor1);
+            return getColor(colorSensor1, 2);
         }
         else if (pos == 2) {
-            return getColor(colorSensor2);
+            return getColor(colorSensor2, 3);
         }
         else if (pos == 3){
-            return getColor(colorSensor3);
+            return getColor(colorSensor3, 2);
         }
         else {
             return null;
@@ -72,7 +86,7 @@ public class ColorDetector implements Subsystem {
         return getSensorTelemetry(colorSensor1) + "\n" + getSensorTelemetry(colorSensor2) + "\n" + getSensorTelemetry(colorSensor3);
     }
 
-    public Boolean checkSlotsCapacity() {
-        return getSensorValues().indexOf(" ") >= 0;
+    public Boolean hasOpenSlots() {
+        return getSensorValues().contains(" ");
     }
 }

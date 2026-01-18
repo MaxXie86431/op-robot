@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.bylazar.configurables.annotations.Configurable;
 
+import org.firstinspires.ftc.teamcode.teleop.DriverControlled;
+
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.SequentialGroup;
@@ -28,6 +30,7 @@ public class Turret implements Subsystem {
     public static double rotationRatio = 0.22;
     public static double positionPerDegree = 9.51;
     public static boolean powerState = false;
+    public static int tolerance= 50;
 
     private final ControlSystem controller = ControlSystem.builder()
             .posPid(kP, kI, kD)
@@ -81,13 +84,21 @@ public class Turret implements Subsystem {
         ).requires(this);
     }
 
+    public Command turnToDegrees(double degrees){
+        return new SequentialGroup(
+                new InstantCommand(() -> powerState = true),
+                new RunToPosition(controller, degrees * positionPerDegree)
+        ).requires(this);
+    }
+
+
     public double getEncoderValue(){
         return turretMotor.getCurrentPosition();
     }
 
 
-    public void zeroEncoderValue() {
-        turretMotor.setCurrentPosition(0);
+    public void setEncoderValue(int pos) {
+        turretMotor.setCurrentPosition(pos);
     }
 
     /*
@@ -103,10 +114,9 @@ public class Turret implements Subsystem {
     public Command autoTrackButton() {
         double angle = Limelight.INSTANCE.calculateAlignmentAngle();
         if (angle != 0) {
-            double targetPosition = turretMotor.getCurrentPosition() + angle * positionPerDegree;
             return new SequentialGroup(
                     new InstantCommand(() -> powerState = true),
-                    new RunToPosition(controller, targetPosition)
+                    turnByDegrees(angle)
             );
 
         }
@@ -117,10 +127,12 @@ public class Turret implements Subsystem {
         powerState = true;
     })
     .setUpdate(() -> {
-        double angle = Limelight.INSTANCE.calculateAlignmentAngle();
-        if (angle != 0) {
-            double targetPosition = turretMotor.getCurrentPosition() + angle * positionPerDegree;
-            new RunToPosition(controller, targetPosition).schedule();
+        if (DriverControlled.turret) {
+            double angle = Limelight.INSTANCE.calculateAlignmentAngle();
+            if (angle != 0) {
+                double targetPosition = controller.getLastMeasurement().getPosition() + angle * positionPerDegree;
+                new RunToPosition(controller, targetPosition).schedule();
+            }
         }
     })
     .setStop(interrupted -> {
