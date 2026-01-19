@@ -27,6 +27,8 @@ public class turrettest extends NextFTCOpMode {
     //left is up right is down rn
     public static double llDelay = 1.25;
     public static boolean turret = true;
+    private static double tagPos = 45;
+    public static double testDegree = 135;
 
     private DriverControlledCommand driverControlled = new PedroDriverControlled(
             Gamepads.gamepad1().leftStickY().negate(),
@@ -45,10 +47,13 @@ public class turrettest extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         PoseStorage.setPose(follower().getPose());
+        /*
         telemetry.addData("Current Pose: ", PoseStorage.getPose());
-        telemetry.addData("Turret pos", Turret.INSTANCE.getEncoderValue());
+        telemetry.addData("Current Angle: ", (PoseStorage.getPose().getHeading())*180.0/Math.PI);
+        telemetry.addData("Turret pos: ", Turret.INSTANCE.getDegrees());
         telemetry.update();
-        super.onUpdate();
+        */
+
     }
 
     @Override
@@ -57,7 +62,9 @@ public class turrettest extends NextFTCOpMode {
         Turret.powerState = false;
         Flicker.INSTANCE.allDown();
         Turret.INSTANCE.setEncoderValue(0);
+        PoseStorage.resetPose();
         follower().setStartingPose(PoseStorage.getPose());
+
     }
 
     @Override
@@ -69,6 +76,7 @@ public class turrettest extends NextFTCOpMode {
          * Circle (b)
          */
         //driverControlled.setScalar(speed);
+
 
         driverControlled.schedule();
 
@@ -134,12 +142,12 @@ public class turrettest extends NextFTCOpMode {
 
         Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(() -> {
-                    Turret.INSTANCE.turnToDegrees(45).schedule();
+                    Turret.INSTANCE.turnByDegrees(testDegree).schedule();
                 });
 
         Gamepads.gamepad1().dpadDown()
                 .whenBecomesTrue(() -> {
-                    Turret.INSTANCE.turnByDegrees(90).schedule();
+                    Turret.INSTANCE.autoAlign(45,PoseStorage.getPose().getHeading()).schedule();
                 });
 
     }

@@ -104,7 +104,7 @@ public class DriverControlled extends NextFTCOpMode {
          */
         //driverControlled.setScalar(speed);
         driverControlled.schedule();
-        Turret.INSTANCE.autoTrack.schedule();
+        //Turret.INSTANCE.autoTrack.schedule();
 
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.2)

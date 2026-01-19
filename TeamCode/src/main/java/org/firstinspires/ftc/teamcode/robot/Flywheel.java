@@ -18,25 +18,25 @@ import dev.nextftc.core.commands.utility.InstantCommand;
 
 @Configurable
 public class Flywheel implements Subsystem{
-    public static double kP = 0.025;
-    public static double kI = 0;
+    public static double kP = 0.005;
+    public static double kI = 0.0175;
     public static double kD = 0.02;
-    public static double kV = 0.005;
+    public static double kV = 0.025;
     public static double kA = 0.02;
-    public static double kS = 0.01;
+    public static double kS = 0.03;
     public static double distanceToGoal = 0;
     public static double launchVelocity = 0;
 
     public static boolean powerState = false;
 
-    private ControlSystem controller = ControlSystem.builder()
+    private final ControlSystem controller = ControlSystem.builder()
             .velPid(kP, kI, kD)
             .basicFF(kV, kA, kS)
             .build();
 
     public static final Flywheel INSTANCE = new Flywheel();
     private Flywheel() { }
-    private MotorEx motor;
+    private final MotorEx motor = new MotorEx("Flywheel");
     public static int inVelocity = -1000;
     public static double launchBuffer = 2;
     public static double launchPower;
@@ -45,7 +45,6 @@ public class Flywheel implements Subsystem{
     @Override
     public void initialize() {
         launchPower = 1;
-        motor = new MotorEx("Flywheel");//.reversed();
     }
     public double getVelocityRPM(){
         double ticksPerSecond = motor.getVelocity();
@@ -90,10 +89,7 @@ public class Flywheel implements Subsystem{
             return new NullCommand();
         }
         return new SequentialGroup(
-                out(launchVelocity),
-                new ParallelDeadlineGroup(
-                        new Delay(launchBuffer)
-                )
+                out(launchVelocity)
 
         ).requires(this);
     }
@@ -107,7 +103,7 @@ public class Flywheel implements Subsystem{
     public Command outPower() {
         //double ticksPerSecond = velocity * TICKS_PER_REVOLUTION / 60.0;
         return new SequentialGroup(
-                new InstantCommand(() -> powerState = true),
+                new InstantCommand(() -> powerState = false),
                 new SetPower(motor, launchPower)
         ).requires(this);
     }

@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.geometry.Pose;
 
+import org.firstinspires.ftc.robotcore.internal.hardware.android.GpioPin;
+import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.teleop.DriverControlled;
 
 import dev.nextftc.control.ControlSystem;
@@ -91,9 +94,30 @@ public class Turret implements Subsystem {
         ).requires(this);
     }
 
+    public Command autoAlign(double tagPos, double heading) {
+        //double turretPos = -1 * getDegrees();
+        //double angle = (heading-tagPos) + (turretPos-90);
+        double angle = tagPos-heading+getDegrees();
+
+
+        ActiveOpMode.telemetry().addData("angle need to turn:", angle);
+        ActiveOpMode.telemetry().addData("current encoder degrees: ", getDegrees());
+        ActiveOpMode.telemetry().addData("Current pose: ", PoseStorage.getPose());
+
+
+        return new SequentialGroup(
+                new InstantCommand(() -> powerState = true),
+                turnByDegrees(-angle)
+        ).requires(this);
+
+    }
+
 
     public double getEncoderValue(){
         return turretMotor.getCurrentPosition();
+    }
+    public double getDegrees() {
+        return getEncoderValue()/positionPerDegree;
     }
 
 
@@ -143,12 +167,10 @@ public class Turret implements Subsystem {
 
     @Override
     public void periodic() {
-        if(powerState && getEncoderValue() > -1000 && getEncoderValue() < 1700) {
+        if(powerState) {
             turretMotor.setPower(controller.calculate(turretMotor.getState()));
         }
-        else {
 
-        }
 
     }
 }

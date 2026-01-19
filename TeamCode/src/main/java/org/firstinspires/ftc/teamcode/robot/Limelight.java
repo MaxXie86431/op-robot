@@ -35,7 +35,7 @@ public class Limelight implements Subsystem {
     private double angleForAlignment;
     public static double slope = 295.32082;
     public static double constant = 902.26553;
-    public static double padding = 60;
+    public static double padding = 55;
 
     public static double angleFactor = -1.6;
     public static double llDelay = 1.25;
