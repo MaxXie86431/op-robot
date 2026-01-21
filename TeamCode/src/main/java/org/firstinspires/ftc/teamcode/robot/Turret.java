@@ -38,8 +38,8 @@ public class Turret implements Subsystem {
     public static double heading;
     public static double angle;
     public static int tolerance= 50;
-    public static int rightBound = 1700;
-    public static int leftBound = -850;
+    public static int rightBound = 1800;
+    public static int leftBound = -950;
     public static boolean locked = false;
     private static double power;
 
@@ -97,14 +97,14 @@ public class Turret implements Subsystem {
         return new SequentialGroup(
             new InstantCommand(() -> powerState = true),
             new RunToPosition(controller, turretMotor.getCurrentPosition()  + degrees * positionPerDegree)
-        ).requires(this);
+        );
     }
 
     public Command turnToDegrees(double degrees){
         return new SequentialGroup(
                 new InstantCommand(() -> powerState = true),
                 new RunToPosition(controller, degrees * positionPerDegree)
-        ).requires(this);
+        );
     }
 
 

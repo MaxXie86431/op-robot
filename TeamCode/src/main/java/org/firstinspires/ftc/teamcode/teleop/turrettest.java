@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.robot.LED;
 import org.firstinspires.ftc.teamcode.robot.Limelight;
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.robot.Turret;
@@ -157,9 +158,12 @@ public class turrettest extends NextFTCOpMode {
                 });
 
 
-        Gamepads.gamepad1().dpadDown()
+        Gamepads.gamepad1().dpadDown().toggleOnBecomesTrue()
                 .whenBecomesTrue(() -> {
-                    Turret.INSTANCE.autoTrackButton().schedule();
+                    LED.INSTANCE.on().schedule();
+                })
+                .whenBecomesFalse(() -> {
+                    LED.INSTANCE.off().schedule();
                 });
 
 
