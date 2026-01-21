@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.internal.hardware.android.GpioPin;
+import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.teleop.DriverControlled;
 
 import dev.nextftc.control.ControlSystem;
@@ -31,7 +34,14 @@ public class Turret implements Subsystem {
     public static double rotationRatio = 0.22;
     public static double positionPerDegree = 9.51;
     public static boolean powerState = false;
+    public static double goalAngle;
+    public static double heading;
+    public static double angle;
     public static int tolerance= 50;
+    public static int rightBound = 1700;
+    public static int leftBound = -850;
+    public static boolean locked = false;
+    private static double power;
 
     private final ControlSystem controller = ControlSystem.builder()
             .posPid(kP, kI, kD)
@@ -48,6 +58,7 @@ public class Turret implements Subsystem {
     @Override
     public void initialize() {
         turretMotor = new MotorEx("Turret-Gear").reversed();
+        turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public Command turnRight() {
@@ -69,6 +80,10 @@ public class Turret implements Subsystem {
             new InstantCommand(() -> powerState = false),
             new SetPower(turretMotor, 0)
         ).requires(this);
+    }
+
+    public void zero() {
+        turretMotor.zero();
     }
 
     public Command goToZero(){
@@ -93,8 +108,32 @@ public class Turret implements Subsystem {
     }
 
 
+    public Command autoAlignTrig() {
+        //double turretPos = -1 * getDegrees();
+        //double angle = (heading-tagPos) + (turretPos-90);
+
+        goalAngle = Math.toDegrees(Math.atan2(132-PoseStorage.getY(),129-PoseStorage.getX()));
+        heading = PoseStorage.getHeading();
+        angle = goalAngle-heading+getDegrees();
+
+        return turnByDegrees(-angle);
+
+    }
+
+
+    public Command autoAlignPerpetual = new LambdaCommand()
+            .setUpdate(() -> {
+                autoAlignTrig().schedule();
+            })
+            .perpetually();
+
+
+
     public double getEncoderValue(){
         return turretMotor.getCurrentPosition();
+    }
+    public double getDegrees() {
+        return getEncoderValue()/positionPerDegree;
     }
 
 
@@ -102,62 +141,56 @@ public class Turret implements Subsystem {
         turretMotor.setCurrentPosition(pos);
     }
 
-    /*
-    public Command autoTrack() {
-        double angle = Limelight.INSTANCE.calculateAlignmentAngle();
-        return new SequentialGroup(
-                new InstantCommand(() -> powerState = true),
-                new RunToPosition(controller, turretMotor.getCurrentPosition()  + angle * positionPerDegree)
-        ).requires(this);
-    }
-    */
 
     public Command autoTrackButton() {
         double angle = Limelight.INSTANCE.calculateAlignmentAngle();
         if (angle != 0) {
-            return new SequentialGroup(
-                    new InstantCommand(() -> powerState = true),
-                    turnByDegrees(angle)
-            );
+            return turnByDegrees(angle);
 
         }
         return new NullCommand();
     }
-    public Command autoTrack = new LambdaCommand()
-    .setStart(() -> {
-        powerState = true;
-    })
-    .setUpdate(() -> {
-        if (DriverControlled.turret) {
-            double angle = Limelight.INSTANCE.calculateAlignmentAngle();
-            if (angle != 0) {
-                double targetPosition = controller.getLastMeasurement().getPosition() + angle * positionPerDegree;
-                new RunToPosition(controller, targetPosition).schedule();
-            }
-        }
-    })
-    .setStop(interrupted -> {
-    })
-    .setIsDone(() -> false)
-    .requires(this)
-    .setInterruptible(true);
 
-    public Command autoTrackwTrig(Pose pose, double turretAngle) {
-        double angle = turretAngle;
-        double yPos = pose.getY();
-        double xPos = pose.getX();
-        angle += Math.atan((yPos-125)/(xPos-15));
-        return turnByDegrees(angle);
-    }
+
 
     @Override
     public void periodic() {
-        if(powerState && getEncoderValue() > -1000 && getEncoderValue() < 1700) {
-            turretMotor.setPower(controller.calculate(turretMotor.getState()));
+        /*
+        if (getEncoderValue() > leftBound && getEncoderValue() < rightBound) {
+            if (powerState) {
+                turretMotor.setPower(controller.calculate(turretMotor.getState()));
+            }
         }
         else {
-
+                turretMotor.setPower(0);
+                locked = true;
         }
+        */
+        if (powerState) {
+            power = controller.calculate(turretMotor.getState());
+        }
+
+        double pos = getEncoderValue();
+
+
+        if (pos >= rightBound && power > 0) {
+            power = 0;
+        }
+
+
+        if (pos <= leftBound && power < 0) {
+            power = 0;
+        }
+
+        turretMotor.setPower(power);
+
+
+
+        /*
+        directions mean actually turning the turret (eg right means turning turret all the way right)
+        - right bound: 1900 encoder, 200 degrees of turret
+        - left bound: -1050 encoder, -110.75 degrees of turret
+         */
 
     }
 }

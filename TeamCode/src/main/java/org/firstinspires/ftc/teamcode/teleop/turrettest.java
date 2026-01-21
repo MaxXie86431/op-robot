@@ -27,6 +27,8 @@ public class turrettest extends NextFTCOpMode {
     //left is up right is down rn
     public static double llDelay = 1.25;
     public static boolean turret = true;
+    private static double tagPos = 45;
+    public static double testDegree = 135;
 
     private DriverControlledCommand driverControlled = new PedroDriverControlled(
             Gamepads.gamepad1().leftStickY().negate(),
@@ -45,19 +47,30 @@ public class turrettest extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         PoseStorage.setPose(follower().getPose());
+
         telemetry.addData("Current Pose: ", PoseStorage.getPose());
-        telemetry.addData("Turret pos", Turret.INSTANCE.getEncoderValue());
+        telemetry.addData("Current Angle: ", ((PoseStorage.getPose().getHeading())*180.0/Math.PI));
+        telemetry.addData("Turret pos: ", Turret.INSTANCE.getDegrees());
+        telemetry.addData("Turret encoders: ", Turret.INSTANCE.getEncoderValue());
+        telemetry.addData("goal angle: ", Turret.goalAngle);
+        telemetry.addData("angle need to turn: ", Turret.angle);
+        telemetry.addData("locked", Turret.locked);
+
         telemetry.update();
-        super.onUpdate();
+
+
     }
 
     @Override
     public void onInit() {
         Flywheel.powerState = false;
         Turret.powerState = false;
+        Turret.locked = false;
         Flicker.INSTANCE.allDown();
-        Turret.INSTANCE.setEncoderValue(0);
+        PoseStorage.resetPose();
         follower().setStartingPose(PoseStorage.getPose());
+        Turret.INSTANCE.zero();
+
     }
 
     @Override
@@ -70,7 +83,9 @@ public class turrettest extends NextFTCOpMode {
          */
         //driverControlled.setScalar(speed);
 
+
         driverControlled.schedule();
+        Turret.INSTANCE.autoAlignPerpetual.schedule();
 
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.2)
@@ -117,6 +132,7 @@ public class turrettest extends NextFTCOpMode {
 
 
 
+
         Gamepads.gamepad1().dpadLeft()
                 .whenBecomesTrue(() -> {
                     Turret.INSTANCE.turnLeft().schedule();
@@ -132,15 +148,22 @@ public class turrettest extends NextFTCOpMode {
                     Turret.INSTANCE.stop().schedule();
                 });
 
-        Gamepads.gamepad1().dpadUp()
+        Gamepads.gamepad1().dpadUp().toggleOnBecomesTrue()
                 .whenBecomesTrue(() -> {
-                    Turret.INSTANCE.turnToDegrees(45).schedule();
+                    Turret.INSTANCE.autoAlignPerpetual.cancel();
+                })
+                .whenBecomesFalse(() -> {
+                    Turret.INSTANCE.autoAlignPerpetual.schedule();
                 });
+
 
         Gamepads.gamepad1().dpadDown()
                 .whenBecomesTrue(() -> {
-                    Turret.INSTANCE.autoTrackwTrig(PoseStorage.getPose(),Turret.INSTANCE.getEncoderValue());
+                    Turret.INSTANCE.autoTrackButton().schedule();
                 });
+
+
+
 
     }
 }

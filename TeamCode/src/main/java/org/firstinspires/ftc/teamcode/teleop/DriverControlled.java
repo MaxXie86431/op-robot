@@ -79,7 +79,6 @@ public class DriverControlled extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        turret = true;
         Flywheel.powerState = false;
         Turret.powerState = false;
         Flicker.INSTANCE.allDown();
@@ -97,7 +96,7 @@ public class DriverControlled extends NextFTCOpMode {
          */
         //driverControlled.setScalar(speed);
         driverControlled.schedule();
-        Turret.INSTANCE.autoTrack.schedule();
+        //Turret.INSTANCE.autoTrack.schedule();
 
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.2)
@@ -145,11 +144,9 @@ public class DriverControlled extends NextFTCOpMode {
         Gamepads.gamepad1().dpadUp()
                 .toggleOnBecomesTrue()
                 .whenBecomesTrue(() -> {
-                    turret = true;
-                })
-                .whenBecomesFalse(()-> {
-                    turret = false;
-                 });
+                    Turret.INSTANCE.autoTrackButton().schedule();
+                });
+
 
         Gamepads.gamepad1().dpadLeft()
                 .whenBecomesTrue(() -> {
