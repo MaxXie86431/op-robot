@@ -146,6 +146,15 @@ public class Flicker implements Subsystem {
         }
     }
 
+    public Command flickTwo(double velocity) {
+        if (velocity == 0) {
+            return new NullCommand();
+        }
+        return new SequentialGroup( //actually creates command of flicks based on what was added earlier
+                chooseFlick(1),
+                chooseFlick(3)
+        );
+    }
     public Command flickAll() {
         String motif = Limelight.INSTANCE.color();
         String inventory = ColorDetector.INSTANCE.getSensorValues();

@@ -82,16 +82,22 @@ public class Flywheel implements Subsystem{
     }
 
     public Command shootOut() {
+        /*
         double[] values = Limelight.INSTANCE.calculateLaunchPower();
         distanceToGoal = values[0];
         launchVelocity = values[1];
-        if (launchVelocity==0) {
-            return new NullCommand();
-        }
-        return new SequentialGroup(
-                out(launchVelocity)
 
-        ).requires(this);
+         */
+        return new SequentialGroup(
+                Turret.INSTANCE.autoTrackButton(),
+                new InstantCommand(() -> {
+                    double[] values = Limelight.INSTANCE.calculateLaunchPower();
+                    distanceToGoal = values[0];
+                    launchVelocity = values[1];
+                }),
+                out(launchVelocity),
+                Flicker.INSTANCE.flickTwo(launchVelocity)
+        );
     }
 
     public Command constantShot(int velocity) {
