@@ -191,15 +191,6 @@ public class Flicker implements Subsystem {
         );
     }
 
-    public Command flickTwo(double velocity) {
-        if (velocity == 0) {
-            return new NullCommand();
-        }
-        return new SequentialGroup( //actually creates command of flicks based on what was added earlier
-                chooseFlick(1),
-                chooseFlick(3)
-        );
-    }
     public Command allDown() {
         return new ParallelGroup(
                 new SetPosition(servo1, down1),
