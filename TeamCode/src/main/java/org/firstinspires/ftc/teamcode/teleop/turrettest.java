@@ -67,7 +67,7 @@ public class turrettest extends NextFTCOpMode {
         Flywheel.powerState = false;
         Turret.powerState = false;
         Turret.locked = false;
-        Flicker.INSTANCE.allDown();
+        Flicker.INSTANCE.allDown().schedule();
         PoseStorage.resetPose();
         follower().setStartingPose(PoseStorage.getPose());
         Turret.INSTANCE.zero();

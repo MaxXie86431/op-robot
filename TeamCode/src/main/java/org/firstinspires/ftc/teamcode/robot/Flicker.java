@@ -30,12 +30,12 @@ public class Flicker implements Subsystem {
     public static double pos = 0.5;
     public static double flickDelay = 1;
     private static String flicked = "";
-    public static double up1 = 0.55;
+    public static double up1 = 0.4;
     public static double down1 = 0.03;
-    public static double up2 = 0.32;
+    public static double up2 = 0.6;
     public static double down2 = 0.94;
-    public static double up3 = 0.65;
-    public static double down3 = 0.95;
+    public static double up3 = 0.5;
+    public static double down3 = 0.075;
     public static boolean flick1Up = false;
     public static boolean flick2Up = false;
     public static boolean flick3Up = false;

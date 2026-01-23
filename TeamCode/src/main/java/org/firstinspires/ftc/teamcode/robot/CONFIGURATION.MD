@@ -21,5 +21,5 @@
 - 5 = Flicker3 (Expansion)
  ## Color Sensors:
 - i2c bus 2 = ColorSensor1 (Control hub)
-- i2c bus 0 = Color Sensor 2 (Control hub) (v3 one)
+- i2c bus 0 = Color Sensor 2 (Control hub) (v3 one);;;;;;;;;;;;;pool, ,,
 - i2c bus 1 = Color Sensor 3 (Control hub)
