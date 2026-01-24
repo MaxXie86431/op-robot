@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.robot.Limelight;
+import org.firstinspires.ftc.teamcode.robot.Turret;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.ParallelGroup;
@@ -32,16 +33,14 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 public class FarRedAuto extends NextFTCOpMode {
 
 
-    public static Pose startPose = new Pose(88, 13, Math.toRadians(180));
-    public static Pose topRowStartPose = new Pose(99, 84.35, Math.toRadians(180));
-    public static Pose topRowEndPose = new Pose(124, 84.35, Math.toRadians(180));
-    public static Pose middleRowStartPose = new Pose(99, 60, Math.toRadians(180));
-    public static Pose middleRowEndPose = new Pose(124, 60, Math.toRadians(180));
-    public static Pose bottomRowStartPose = new Pose(99, 35, Math.toRadians(180));
-    public static Pose bottomRowEndPose = new Pose(124, 35, Math.toRadians(180));
-    public static Pose frontLaunchPose = new Pose(59, 84.3, Math.toRadians(180));
-    public static Pose endPose = new Pose(85, 34, Math.toRadians(180));
-
+    private static final Pose startPose = new Pose(88, 8, Math.toRadians(72));
+    private static final Pose frontLaunchPose = new Pose(85, 85, Math.toRadians(45));
+    private static final Pose topRowStartPose = new Pose(100, 84.35, Math.toRadians(0));
+    private static final Pose topRowEndPose = new Pose(131, 84.35, Math.toRadians(0));
+    private static final Pose middleRowStartPose = new Pose(100, 60, Math.toRadians(0));
+    private static final Pose middleRowEndPose = new Pose(131, 60, Math.toRadians(0));
+    private static final Pose bottomRowStartPose = new Pose(100, 35, Math.toRadians(0));
+    private static final Pose bottomRowEndPose = new Pose(131, 35, Math.toRadians(0));
     public static int FAR_SPEED = 1520;
     public static int FIRST_SPEED = 1520;
     public static int SECOND_SPEED = 1520;
@@ -67,7 +66,7 @@ public class FarRedAuto extends NextFTCOpMode {
     {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(Intake.INSTANCE, Flicker.INSTANCE, Flywheel.INSTANCE, Limelight.INSTANCE),
+                new SubsystemComponent(Intake.INSTANCE, Flicker.INSTANCE, Flywheel.INSTANCE, Limelight.INSTANCE, Turret.INSTANCE),
                 BulkReadComponent.INSTANCE
         );
     }
@@ -160,6 +159,9 @@ public class FarRedAuto extends NextFTCOpMode {
         Flywheel.powerState = false;
         debugTelemetry = telemetry;
         // Initialize the follower with your constants
+        Flicker.INSTANCE.allDown().schedule();
+        Turret.INSTANCE.zero();
+        PoseStorage.setPose(startPose);
         follower().setStartingPose(startPose);
         follower().update();
         buildPaths();
@@ -173,10 +175,10 @@ public class FarRedAuto extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
+        follower().update();
         PoseStorage.setPose(follower().getPose());
         telemetry.addData("flywheel rpm: ", Flywheel.INSTANCE.getVelocityRPM());
         telemetry.update();
-        follower().update();
     }
 
 }

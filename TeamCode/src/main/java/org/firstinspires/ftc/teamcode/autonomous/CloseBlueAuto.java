@@ -35,13 +35,14 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 import kotlin.time.Instant;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robot.Turret;
 
 @Configurable
 @Autonomous(name = "Close 9-Ball Blue Auto")
 public class CloseBlueAuto extends NextFTCOpMode {
     // Define poses
-    private static Pose startPose = new Pose(22, 121, Math.toRadians(315));
-    private static Pose launchPose = new Pose(59, 82, Math.toRadians(315));
+    private static Pose startPose = new Pose(22, 121, Math.toRadians(135));
+    private static Pose launchPose = new Pose(59, 82, Math.toRadians(135));
     private static Pose outtatheWayPose = new Pose(50,65,240);
     private static Pose parkPose = new Pose(38.5,34,225);
     private static Pose topRowEndPose = new Pose(18, 82, Math.toRadians(180));
@@ -61,7 +62,7 @@ public class CloseBlueAuto extends NextFTCOpMode {
     {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(Intake.INSTANCE, Flicker.INSTANCE, Flywheel.INSTANCE, Limelight.INSTANCE),
+                new SubsystemComponent(Intake.INSTANCE, Flicker.INSTANCE, Flywheel.INSTANCE, Limelight.INSTANCE, Turret.INSTANCE),
                 BulkReadComponent.INSTANCE
         );
     }
@@ -96,6 +97,7 @@ public class CloseBlueAuto extends NextFTCOpMode {
                 .build();
         initialLaunchPath = follower().pathBuilder()
                 .addPath(new BezierLine(startPose, launchPose))
+                .setLinearHeadingInterpolation(startPose.getHeading(), launchPose.getHeading())
                 .build();
         topRowPath = follower().pathBuilder()
                 .addPath(new BezierLine(launchPose, topRowEndPose))
@@ -156,7 +158,11 @@ public class CloseBlueAuto extends NextFTCOpMode {
     public void onInit() {
         Flywheel.powerState = false;
         debugTelemetry = telemetry;
+        Flicker.INSTANCE.allDown().schedule();
+        Turret.INSTANCE.zero();
+        //Turret.INSTANCE.setEncoderValue(0);
         // Initialize the follower with your constants
+        PoseStorage.setPose(startPose);
         follower().setStartingPose(startPose);
         follower().update();
         buildPaths();
@@ -170,10 +176,10 @@ public class CloseBlueAuto extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
+        follower().update();
         PoseStorage.setPose(follower().getPose());
         telemetry.addData("flywheel rpm: ", Flywheel.INSTANCE.getVelocityRPM());
         telemetry.update();
-        follower().update();
     }
 
 }

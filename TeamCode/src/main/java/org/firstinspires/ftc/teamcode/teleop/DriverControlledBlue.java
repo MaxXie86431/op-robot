@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.Team;
 import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
@@ -23,8 +24,8 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.DriverControlledCommand;
 
 @Configurable
-@TeleOp(name = "turret test")
-public class turrettest extends NextFTCOpMode {
+@TeleOp(name = "DriverControlledBlue")
+public class DriverControlledBlue extends NextFTCOpMode {
     //left is up right is down rn
     public static double llDelay = 1.25;
     public static boolean turret = true;
@@ -37,7 +38,7 @@ public class turrettest extends NextFTCOpMode {
             Gamepads.gamepad1().rightStickX().negate());
 
 
-    public turrettest() {
+    public DriverControlledBlue() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
                 new SubsystemComponent(Flywheel.INSTANCE, Intake.INSTANCE, Flicker.INSTANCE, Turret.INSTANCE, Limelight.INSTANCE),
@@ -67,10 +68,11 @@ public class turrettest extends NextFTCOpMode {
         Flywheel.powerState = false;
         Turret.powerState = false;
         Turret.locked = false;
-        Flicker.INSTANCE.allDown();
-        PoseStorage.resetPose();
+        Flicker.INSTANCE.allDown().schedule();
+        //PoseStorage.resetPose();
         follower().setStartingPose(PoseStorage.getPose());
-        Turret.INSTANCE.zero();
+        Team.setTeam(0);
+        //Turret.INSTANCE.zero();
 
     }
 

@@ -26,10 +26,11 @@ public class Flywheel implements Subsystem{
     public static double kS = 0.03;
     public static double distanceToGoal = 0;
     public static double launchVelocity = 0;
+    public static int tolerance = 30;
 
     public static boolean powerState = false;
 
-    private final ControlSystem controller = ControlSystem.builder()
+    private ControlSystem controller = ControlSystem.builder()
             .velPid(kP, kI, kD)
             .basicFF(kV, kA, kS)
             .build();
@@ -57,7 +58,7 @@ public class Flywheel implements Subsystem{
         //double ticksPerSecond = velocity * TICKS_PER_REVOLUTION / 60.0;
         return new SequentialGroup(
                 new InstantCommand(() -> powerState = true),
-                new RunToVelocity(controller, velocity, 20)
+                new RunToVelocity(controller, velocity, tolerance)
         ).requires(this);
     }
 
@@ -90,6 +91,7 @@ public class Flywheel implements Subsystem{
          */
         return new SequentialGroup(
                 Turret.INSTANCE.autoTrackButton(),
+                Turret.INSTANCE.turnByDegrees(-3),
                 new InstantCommand(() -> {
                     double[] values = Limelight.INSTANCE.calculateLaunchPower();
                     distanceToGoal = values[0];

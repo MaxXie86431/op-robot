@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.internal.hardware.android.GpioPin;
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
+import org.firstinspires.ftc.teamcode.pedroPathing.Team;
 import org.firstinspires.ftc.teamcode.teleop.DriverControlled;
 
 import dev.nextftc.control.ControlSystem;
@@ -111,8 +112,12 @@ public class Turret implements Subsystem {
     public Command autoAlignTrig() {
         //double turretPos = -1 * getDegrees();
         //double angle = (heading-tagPos) + (turretPos-90);
-
-        goalAngle = Math.toDegrees(Math.atan2(132-PoseStorage.getY(),129-PoseStorage.getX()));
+        if (Team.getTeam() == 0) {
+            goalAngle = Math.toDegrees(Math.atan2(132 - PoseStorage.getY(), 15 - PoseStorage.getX()));
+        }
+        else {
+            goalAngle = Math.toDegrees(Math.atan2(132 - PoseStorage.getY(), 129 - PoseStorage.getX()));
+        }
         heading = PoseStorage.getHeading();
         angle = goalAngle-heading+getDegrees();
 
