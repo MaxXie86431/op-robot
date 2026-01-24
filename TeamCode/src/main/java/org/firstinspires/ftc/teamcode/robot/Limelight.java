@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import static org.firstinspires.ftc.teamcode.robot.Turret.goalAngle;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import org.firstinspires.ftc.robotcore.internal.hardware.android.GpioPin;
+import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
@@ -36,7 +39,7 @@ public class Limelight implements Subsystem {
     public static double slope = 295.32082;
     public static double constant = 902.26553;
     public static double padding = 55;
-
+    public static double limelightToInchesConstant = 0.5;
     public static double angleFactor = -1.6;
     public static double llDelay = 1.25;
 
@@ -65,7 +68,9 @@ public class Limelight implements Subsystem {
                 }
             }
         }
-        return new double[]{0,0};
+        distanceFromLimelightToGoal = Math.sqrt(Math.pow((132-PoseStorage.getY()),2)+Math.pow((129-PoseStorage.getX()), 2));
+        goalVelocity = slope * (distanceFromLimelightToGoal*limelightToInchesConstant) + constant + padding;
+        return new double[]{distanceFromLimelightToGoal, goalVelocity};
     }
 
     public double calculateAlignmentAngle() {
