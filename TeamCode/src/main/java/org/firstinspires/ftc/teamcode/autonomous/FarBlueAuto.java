@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.robot.Limelight;
+import org.firstinspires.ftc.teamcode.robot.Turret;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.ParallelGroup;
@@ -32,7 +33,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 @Autonomous(name = "Far 9-Ball Blue Auto")
 public class FarBlueAuto extends NextFTCOpMode {
 
-    public static Pose startPose = new Pose(59, 13, Math.toRadians(180));
+    public static Pose startPose = new Pose(59, 13, Math.toRadians(112));
     public static Pose topRowStartPose = new Pose(50, 84.35, Math.toRadians(180));
     public static Pose topRowEndPose = new Pose(20, 84.35, Math.toRadians(180));
     public static Pose middleRowStartPose = new Pose(50, 60, Math.toRadians(180));
@@ -65,7 +66,7 @@ public class FarBlueAuto extends NextFTCOpMode {
     {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(Intake.INSTANCE, Flicker.INSTANCE, Flywheel.INSTANCE, Limelight.INSTANCE),
+                new SubsystemComponent(Intake.INSTANCE, Flicker.INSTANCE, Flywheel.INSTANCE, Limelight.INSTANCE, Turret.INSTANCE),
                 BulkReadComponent.INSTANCE
         );
     }
@@ -157,6 +158,9 @@ public class FarBlueAuto extends NextFTCOpMode {
         Flywheel.powerState = false;
         debugTelemetry = telemetry;
         // Initialize the follower with your constants
+        Flicker.INSTANCE.allDown().schedule();
+        Turret.INSTANCE.zero();
+        PoseStorage.setPose(startPose);
         follower().setStartingPose(startPose);
         follower().update();
         buildPaths();
@@ -170,10 +174,10 @@ public class FarBlueAuto extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
+        follower().update();
         PoseStorage.setPose(follower().getPose());
         telemetry.addData("flywheel rpm: ", Flywheel.INSTANCE.getVelocityRPM());
         telemetry.update();
-        follower().update();
     }
 
 }
