@@ -32,7 +32,7 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Configurable
-@TeleOp(name = "pidflywheel")
+@TeleOp(name = "regression")
 public class RegressionModel extends NextFTCOpMode {
     private double power = 0.9;
     private double distance;
@@ -73,6 +73,7 @@ public class RegressionModel extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         telemetry.addData("Launch Power", launchPower);
+        telemetry.addData("Target rpm", Flywheel.INSTANCE.getPower()*2000);
         telemetry.addData("Velocity RPM", Flywheel.INSTANCE.getVelocityRPM());
         telemetry.addData("D-pad Left", gamepad1.dpad_left);
         telemetry.addData("D-pad Down", gamepad1.dpad_down);
@@ -120,8 +121,7 @@ public class RegressionModel extends NextFTCOpMode {
                 .whenBecomesTrue(Flywheel.INSTANCE.decreasePower());
 
         Gamepads.gamepad1().dpadLeft()
-                .whenBecomesTrue(() -> Flywheel.INSTANCE.outPower().schedule())
-                .whenBecomesFalse(() -> Flywheel.INSTANCE.shutdown().schedule());
+                .whenBecomesTrue(() -> Flicker.INSTANCE.flickThreeBalls().schedule());
 
         Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(Flywheel.INSTANCE.increasePower());

@@ -28,7 +28,8 @@ public class Flicker implements Subsystem {
     private final ServoEx servo2= new ServoEx("Flicker2");
     private final ServoEx servo3= new ServoEx("Flicker3");
     public static double pos = 0.5;
-    public static double flickDelay = 1;
+    public static double flickDelay = 0.2;
+    public static double betweenflicksDelay = 0.1;
     private static String flicked = "";
     /*
     public static double up1 = 0.4;
@@ -41,12 +42,13 @@ public class Flicker implements Subsystem {
     public static boolean flick1Up = false;
     public static boolean flick2Up = false;
     public static boolean flick3Up = false;
-    public static double up1 = 0.6;
-    public static double down1 = 0.06;
-    public static double up2 = 0.6;
+    public static double up1 = 0.5;
+    public static double down1 = 0.1;
+    public static double up2 = 0.58;
     public static double down2 = 0.94;
-    public static double up3 = 0.6;
-    public static double down3 = 0.075;
+    public static double up3 = 0.75;
+    public static double down3 = 0;
+    public static double bumper = 0.15;
 
     public Command flick1() {
         return new SequentialGroup(
@@ -70,6 +72,10 @@ public class Flicker implements Subsystem {
                 new Delay(flickDelay),
                 new SetPosition(servo3, down3)
         );
+    }
+
+    public Command intakeHelper() {
+        return new SetPosition(servo1, bumper);
     }
 
     public Command flick1Switch() {
@@ -203,6 +209,17 @@ public class Flicker implements Subsystem {
                 new SetPosition(servo1, down1),
                 new SetPosition(servo2, down2),
                 new SetPosition(servo3, down3)
+        );
+    }
+
+    public Command flickThreeBalls() {
+        return new SequentialGroup(
+                flick3(),
+                new Delay(betweenflicksDelay),
+                flick2(),
+                new Delay(betweenflicksDelay),
+                flick1(),
+                new Delay(betweenflicksDelay)
         );
     }
 

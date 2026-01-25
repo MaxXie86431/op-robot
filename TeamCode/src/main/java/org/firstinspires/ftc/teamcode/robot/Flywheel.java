@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
@@ -19,11 +21,11 @@ import dev.nextftc.core.commands.utility.InstantCommand;
 @Configurable
 public class Flywheel implements Subsystem{
     public static double kP = 0.005;
-    public static double kI = 0.0175;
-    public static double kD = 0.02;
-    public static double kV = 0.025;
-    public static double kA = 0.02;
-    public static double kS = 0.03;
+    public static double kI = 0;
+    public static double kD = 0.01;
+    public static double kV = 0.0005;
+    public static double kA = 0.05;
+    public static double kS = 0.05;
     public static double distanceToGoal = 0;
     public static double launchVelocity = 0;
     public static int tolerance = 30;
@@ -35,9 +37,9 @@ public class Flywheel implements Subsystem{
             .basicFF(kV, kA, kS)
             .build();
 
-    public static final Flywheel INSTANCE = new Flywheel();
+    public static Flywheel INSTANCE = new Flywheel();
     private Flywheel() { }
-    private final MotorEx motor = new MotorEx("Flywheel");
+    private MotorEx motor = new MotorEx("Flywheel");
     public static int inVelocity = -1000;
     public static double launchBuffer = 2;
     public static double launchPower;
@@ -45,7 +47,8 @@ public class Flywheel implements Subsystem{
 
     @Override
     public void initialize() {
-        launchPower = 1;
+        motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        launchPower = 0.55;
     }
     public double getVelocityRPM(){
         double ticksPerSecond = motor.getVelocity();
@@ -98,13 +101,14 @@ public class Flywheel implements Subsystem{
                     launchVelocity = values[1];
                 }),
                 out(launchVelocity),
-                Flicker.INSTANCE.flickTwo(launchVelocity)
+                Flicker.INSTANCE.flickThreeBalls()
         );
     }
 
     public Command constantShot(int velocity) {
         return new SequentialGroup(
-                out(velocity)
+                out(velocity),
+                Flicker.INSTANCE.flickThreeBalls()
         ).requires(this);
     }
 

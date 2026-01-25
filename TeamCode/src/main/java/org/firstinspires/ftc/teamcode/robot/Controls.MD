@@ -10,26 +10,26 @@
 ## Y - Triangle
 - Flick2
 ## A - Cross/X
-- 
+- speed toggle for drivetrain
 ## B - Circle
-- Flick3
+- Flick 3
 
 ## DpadUp
-- Auto Track
+- Turn on/off auto tracking
 ## DpadDown
-- 
+- reverse flywheel
 ## DpadLeft
 - Turret left
 ## DpadRight
 - Turret right
-## Right Bumper
-- 
 ## Right Trigger
-- Flywheel shoots out
+- Flywheel shoots out + three flickers flick
+## Right Bumper
+- constant shot as fallback+flicks three
 ## Left Bumper
-- Intake In
-## Left Trigger
 - Intake Out
+## Left Trigger
+- Intake In
 
 
 
