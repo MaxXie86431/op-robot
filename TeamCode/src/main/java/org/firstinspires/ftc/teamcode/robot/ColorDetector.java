@@ -83,7 +83,7 @@ public class ColorDetector implements Subsystem {
 
     public String getSensorValues() {
         //return getColor(colorSensor1) + getColor(colorSensor2) + getColor(colorSensor3);
-        return getSensorTelemetry(colorSensor1) + "\n" + getSensorTelemetry(colorSensor2) + "\n" + getSensorTelemetry(colorSensor3);
+        return "\n" + getSensorTelemetry(colorSensor1) + "\n" + getSensorTelemetry(colorSensor2) + "\n" + getSensorTelemetry(colorSensor3);
     }
 
     public Boolean hasOpenSlots() {
