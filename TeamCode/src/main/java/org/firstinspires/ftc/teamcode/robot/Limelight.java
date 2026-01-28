@@ -9,6 +9,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import org.firstinspires.ftc.robotcore.internal.hardware.android.GpioPin;
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
+import org.firstinspires.ftc.teamcode.pedroPathing.Team;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
@@ -68,7 +69,11 @@ public class Limelight implements Subsystem {
                 }
             }
         }
-        distanceFromLimelightToGoal = Math.sqrt(Math.pow((132-PoseStorage.getY()),2)+Math.pow((129-PoseStorage.getX()), 2));
+        if (Team.getTeam() == 1) {
+            distanceFromLimelightToGoal = Math.sqrt(Math.pow((132 - PoseStorage.getY()), 2) + Math.pow((129 - PoseStorage.getX()), 2));
+        } else {
+            distanceFromLimelightToGoal = Math.sqrt(Math.pow((132 - PoseStorage.getY()), 2) + Math.pow((15 - PoseStorage.getX()), 2));
+        }
         goalVelocity = slope * (distanceFromLimelightToGoal*limelightToInchesConstant) + constant + padding;
         return new double[]{distanceFromLimelightToGoal, goalVelocity};
     }
