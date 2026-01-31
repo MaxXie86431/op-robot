@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawCurrent;
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawCurrentAndHistory;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -12,10 +9,8 @@ import com.pedropathing.util.PoseHistory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
@@ -25,21 +20,19 @@ import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
-import org.firstinspires.ftc.teamcode.pedroPathing.Tuning;
 import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.robot.Limelight;
 
 import dev.nextftc.ftc.components.BulkReadComponent;
-import kotlin.time.Instant;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Turret;
 
 @Configurable
-@Autonomous(name = "Close 3 Row Blue Auto")
-public class CloseBlueAuto extends NextFTCOpMode {
+@Autonomous(name = "Close 2 Row Blue Auto")
+public class CloseBlue2RowAuto extends NextFTCOpMode {
     // Define poses
     private static Pose startPose = new Pose(22, 121, Math.toRadians(135));
     private static Pose launchPose = new Pose(59, 82, Math.toRadians(135));
@@ -79,8 +72,6 @@ public class CloseBlueAuto extends NextFTCOpMode {
                 new FollowPath(topRowPath),
                 Flicker.INSTANCE.flickTwo(1),
                 new FollowPath(middleRowPath),
-                Flicker.INSTANCE.flickTwo(1),
-                new FollowPath(bottomRowPath),
                 Flicker.INSTANCE.flickTwo(1),
 
                 Flywheel.INSTANCE.shutdown(),

@@ -38,18 +38,18 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Turret;
 
 @Configurable
-@Autonomous(name = "Close 3 Row Blue Auto")
-public class CloseBlueAuto extends NextFTCOpMode {
+@Autonomous(name = "Close 2 Row Red Auto")
+public class CloseRed2RowAuto extends NextFTCOpMode {
     // Define poses
-    private static Pose startPose = new Pose(22, 121, Math.toRadians(135));
-    private static Pose launchPose = new Pose(59, 82, Math.toRadians(135));
-    private static Pose outtatheWayPose = new Pose(50,65,240);
-    private static Pose parkPose = new Pose(38.5,34,225);
-    private static Pose topRowEndPose = new Pose(18, 82, Math.toRadians(180));
-    private static Pose middleRowStartPose = new Pose(59, 56, Math.toRadians(180));
-    private static Pose middleRowEndPose = new Pose(15, 56, Math.toRadians(180));
-    private static Pose bottomRowStartPose = new Pose(59, 34, Math.toRadians(180));
-    private static Pose bottomRowEndPose = new Pose(15, 34, Math.toRadians(180));
+    private static final Pose startPose = new Pose(119, 125, Math.toRadians(45));
+    private static final Pose launchPose = new Pose(84, 84.3, Math.toRadians(45));
+    private static final Pose outtatheWayPose = new Pose(94,65,Math.toRadians(300));
+    private static final Pose parkPose = new Pose(38.5,34,225);
+    private static final Pose topRowEndPose = new Pose(120, 84.35, Math.toRadians(0));
+    private static final Pose middleRowStartPose = new Pose(84, 60, Math.toRadians(0));
+    private static final Pose middleRowEndPose = new Pose(120, 60, Math.toRadians(0));
+    private static final Pose bottomRowStartPose = new Pose(84, 36, Math.toRadians(0));
+    private static final Pose bottomRowEndPose = new Pose(120, 36, Math.toRadians(0));
 
     public static double wait = 2;
     private PathChain initialLaunchPath, initialOut, outtaTheWayPath, topRowPath, middleRowPath, bottomRowPath, parkPath;
@@ -80,11 +80,10 @@ public class CloseBlueAuto extends NextFTCOpMode {
                 Flicker.INSTANCE.flickTwo(1),
                 new FollowPath(middleRowPath),
                 Flicker.INSTANCE.flickTwo(1),
-                new FollowPath(bottomRowPath),
-                Flicker.INSTANCE.flickTwo(1),
 
                 Flywheel.INSTANCE.shutdown(),
                 new FollowPath(outtaTheWayPath)
+
 
         );
     }
@@ -160,10 +159,9 @@ public class CloseBlueAuto extends NextFTCOpMode {
     public void onInit() {
         Flywheel.powerState = false;
         debugTelemetry = telemetry;
-        Flicker.INSTANCE.allDown().schedule();
-        Turret.INSTANCE.zero();
-        //Turret.INSTANCE.setEncoderValue(0);
         // Initialize the follower with your constants
+        Flicker.INSTANCE.allDown();
+        Turret.INSTANCE.zero();
         PoseStorage.setPose(startPose);
         follower().setStartingPose(startPose);
         follower().update();

@@ -38,7 +38,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Turret;
 
 @Configurable
-@Autonomous(name = "Close 9-Ball Red Auto")
+@Autonomous(name = "Close 3 Row Red Auto")
 public class CloseRedAuto extends NextFTCOpMode {
     // Define poses
     private static final Pose startPose = new Pose(119, 125, Math.toRadians(45));
@@ -82,6 +82,8 @@ public class CloseRedAuto extends NextFTCOpMode {
                 Flicker.INSTANCE.flickTwo(1),
                 new FollowPath(bottomRowPath),
                 Flicker.INSTANCE.flickTwo(1),
+
+                Flywheel.INSTANCE.shutdown(),
                 new FollowPath(outtaTheWayPath)
 
 

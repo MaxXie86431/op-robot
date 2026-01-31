@@ -30,8 +30,8 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Configurable
-@Autonomous(name = "Far 3 Row Blue Auto")
-public class FarBlueAuto extends NextFTCOpMode {
+@Autonomous(name = "Far 2 Row Blue Auto")
+public class FarBlue2RowAuto extends NextFTCOpMode {
 
     public static Pose startPose = new Pose(59, 13, Math.toRadians(112));
     public static Pose topRowStartPose = new Pose(50, 84.35, Math.toRadians(180));
@@ -86,9 +86,6 @@ public class FarBlueAuto extends NextFTCOpMode {
                 Flicker.INSTANCE.flickTwo(1),
                 new FollowPath(middleRowPath),
                 Flywheel.INSTANCE.constantShot(SECOND_SPEED),
-                Flicker.INSTANCE.flickTwo(1),
-                new FollowPath(topRowPath),
-                Flywheel.INSTANCE.out(THIRD_SPEED),
                 Flicker.INSTANCE.flickTwo(1),
                 Flywheel.INSTANCE.shutdown(),
                 new FollowPath(outtaTheWay)

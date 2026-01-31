@@ -29,7 +29,7 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Configurable
-@Autonomous(name = "Far 9-Ball Red Auto")
+@Autonomous(name = "Far 3 Row Red Auto")
 public class FarRedAuto extends NextFTCOpMode {
 
 

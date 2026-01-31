@@ -25,24 +25,22 @@ import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
-import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Configurable
-@Autonomous(name = "Far 3 Row Blue Auto")
-public class FarBlueAuto extends NextFTCOpMode {
+@Autonomous(name = "Far 1 Row Red Auto")
+public class FarRed1RowAuto extends NextFTCOpMode {
 
-    public static Pose startPose = new Pose(59, 13, Math.toRadians(112));
-    public static Pose topRowStartPose = new Pose(50, 84.35, Math.toRadians(180));
-    public static Pose topRowEndPose = new Pose(20, 84.35, Math.toRadians(180));
-    public static Pose middleRowStartPose = new Pose(50, 60, Math.toRadians(180));
-    public static Pose middleRowEndPose = new Pose(20, 60, Math.toRadians(180));
-    public static Pose bottomRowStartPose = new Pose(45, 35, Math.toRadians(180));
-    public static Pose bottomRowEndPose = new Pose(20, 35, Math.toRadians(180));
-    public static Pose frontLaunchPose = new Pose(59, 84.3, Math.toRadians(180));
-    public static Pose endPose = new Pose(38.5, 34, Math.toRadians(180));
 
+    private static final Pose startPose = new Pose(88, 8, Math.toRadians(72));
+    private static final Pose frontLaunchPose = new Pose(85, 85, Math.toRadians(45));
+    private static final Pose topRowStartPose = new Pose(100, 84.35, Math.toRadians(0));
+    private static final Pose topRowEndPose = new Pose(131, 84.35, Math.toRadians(0));
+    private static final Pose middleRowStartPose = new Pose(100, 60, Math.toRadians(0));
+    private static final Pose middleRowEndPose = new Pose(131, 60, Math.toRadians(0));
+    private static final Pose bottomRowStartPose = new Pose(100, 35, Math.toRadians(0));
+    private static final Pose bottomRowEndPose = new Pose(131, 35, Math.toRadians(0));
     public static int FAR_SPEED = 1520;
     public static int FIRST_SPEED = 1520;
     public static int SECOND_SPEED = 1520;
@@ -56,6 +54,8 @@ public class FarBlueAuto extends NextFTCOpMode {
     private PathChain topRowPath;
     private PathChain outtaTheWay;
 
+
+    public static double wait = 2;
 
     public static Pose autoPose;
     static PoseHistory poseHistory;
@@ -84,13 +84,7 @@ public class FarBlueAuto extends NextFTCOpMode {
                 new FollowPath(bottomRowPath),
                 Flywheel.INSTANCE.out(FIRST_SPEED),
                 Flicker.INSTANCE.flickTwo(1),
-                new FollowPath(middleRowPath),
-                Flywheel.INSTANCE.constantShot(SECOND_SPEED),
-                Flicker.INSTANCE.flickTwo(1),
-                new FollowPath(topRowPath),
-                Flywheel.INSTANCE.out(THIRD_SPEED),
-                Flicker.INSTANCE.flickTwo(1),
-                Flywheel.INSTANCE.shutdown(),
+
                 new FollowPath(outtaTheWay)
         );
     }
