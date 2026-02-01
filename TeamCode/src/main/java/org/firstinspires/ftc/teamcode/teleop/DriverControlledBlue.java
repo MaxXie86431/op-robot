@@ -47,6 +47,7 @@ public class DriverControlledBlue extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
+        follower().update();
         PoseStorage.setPose(follower().getPose());
 
         telemetry.addData("Current Pose: ", PoseStorage.getPose());
@@ -57,9 +58,9 @@ public class DriverControlledBlue extends NextFTCOpMode {
         telemetry.addData("angle need to turn: ", Turret.angle);
         telemetry.addData("locked", Turret.locked);
         telemetry.addData("Sensor Values: ", ColorDetector.INSTANCE.getSensorValues());
-
+        telemetry.addData("current rpm", Flywheel.INSTANCE.getVelocityRPM());
         telemetry.update();
-
+        super.onUpdate();
 
     }
 
@@ -70,6 +71,7 @@ public class DriverControlledBlue extends NextFTCOpMode {
         Turret.locked = false;
         //PoseStorage.resetPose();
         follower().setStartingPose(PoseStorage.getPose());
+        follower().update();
         Team.setTeam(0);
         //Turret.INSTANCE.zero();
 
@@ -87,7 +89,7 @@ public class DriverControlledBlue extends NextFTCOpMode {
 
 
         driverControlled.schedule();
-        Flicker.INSTANCE.allDown().schedule();
+        Flicker.INSTANCE.flickThreeBalls().schedule();
         Turret.INSTANCE.autoAlignPerpetual.schedule();
 
 
@@ -101,7 +103,7 @@ public class DriverControlledBlue extends NextFTCOpMode {
 
         Gamepads.gamepad1().rightBumper()
                 .whenBecomesTrue(() -> {
-                    Flywheel.INSTANCE.constantShot(1100).schedule();
+                    Flywheel.INSTANCE.constantShot(1200).schedule();
                 })
                 .whenBecomesFalse(() -> {
                     Flywheel.INSTANCE.shutdown().schedule();
@@ -134,9 +136,9 @@ public class DriverControlledBlue extends NextFTCOpMode {
                 .whenBecomesTrue(() -> {
                     driverControlled.setScalar(speed);
                 })
-        .whenBecomesFalse(() -> {
-            driverControlled.setScalar(1);
-        });
+                .whenBecomesFalse(() -> {
+                    driverControlled.setScalar(1);
+                });
 
 
         Gamepads.gamepad1().y()

@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.geometry.Pose;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.internal.hardware.android.GpioPin;
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Team;
-import org.firstinspires.ftc.teamcode.teleop.DriverControlled;
 
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.core.commands.Command;
@@ -16,7 +12,6 @@ import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.commands.utility.NullCommand;
 import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.controllable.RunToPosition;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.powerable.SetPower;
@@ -58,22 +53,21 @@ public class Turret implements Subsystem {
 
     @Override
     public void initialize() {
-        turretMotor = new MotorEx("Turret-Gear").reversed();
-        turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        turretMotor = new MotorEx("Turret-Gear").reversed().brakeMode();
     }
 
     public Command turnRight() {
         return new SequentialGroup(
                 new InstantCommand(() -> powerState = false),
                 new SetPower(turretMotor, velocity)
-        ).requires(this);
+        );
     }
 
     public Command turnLeft(){
         return new SequentialGroup(
             new InstantCommand(() -> powerState = false),
             new SetPower(turretMotor, -1 * velocity)
-        ).requires(this);
+        );
     }
 
     public Command stop(){
@@ -112,16 +106,43 @@ public class Turret implements Subsystem {
     public Command autoAlignTrig() {
         //double turretPos = -1 * getDegrees();
         //double angle = (heading-tagPos) + (turretPos-90);
+        heading = PoseStorage.getHeadingDegrees();
         if (Team.getTeam() == 0) {
-            goalAngle = Math.toDegrees(Math.atan2(132 - PoseStorage.getY(), 15 - PoseStorage.getX()));
+            //goalAngle = (180-(Math.toDegrees(Math.atan2(132 - PoseStorage.getY(), PoseStorage.getX()-15))));
+            goalAngle = (180-(Math.toDegrees(Math.atan2(132 - PoseStorage.getY(), PoseStorage.getX()-12))));
+            angle = goalAngle-heading+getDegrees();
+            if (angle >= 0) {
+                if (angle >= 180) {
+                    angle = 360 - angle;
+                }
+            }
+            else if (angle < 0) {
+                if (angle <= -180) {
+                    angle = angle + 360;
+                }
+            }
+            return turnByDegrees(-angle);
         }
         else {
-            goalAngle = Math.toDegrees(Math.atan2(132 - PoseStorage.getY(), 129 - PoseStorage.getX()));
+            //goalAngle = Math.toDegrees(Math.atan2(132 - PoseStorage.getY(), 129 - PoseStorage.getX()));
+            goalAngle = Math.toDegrees(Math.atan2(132 - PoseStorage.getY(), 126 - PoseStorage.getX()));
+            angle = goalAngle-heading+getDegrees();
+            if (angle >= 0) {
+                if (angle >= 180) {
+                    angle = 360 - angle;
+                }
+            }
+            else if (angle < 0) {
+                if (angle <= -180) {
+                    angle = angle + 360;
+                }
+            }
+            return turnByDegrees(-angle);
         }
-        heading = PoseStorage.getHeading();
-        angle = goalAngle-heading+getDegrees();
 
-        return turnByDegrees(-angle);
+
+
+        //return turnByDegrees(-angle);
 
     }
 

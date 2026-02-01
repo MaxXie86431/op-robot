@@ -69,6 +69,7 @@ public class Limelight implements Subsystem {
                 }
             }
         }
+        /*
         if (Team.getTeam() == 1) {
             distanceFromLimelightToGoal = Math.sqrt(Math.pow((132 - PoseStorage.getY()), 2) + Math.pow((129 - PoseStorage.getX()), 2));
         } else {
@@ -76,6 +77,9 @@ public class Limelight implements Subsystem {
         }
         goalVelocity = slope * (distanceFromLimelightToGoal*limelightToInchesConstant) + constant + padding;
         return new double[]{distanceFromLimelightToGoal, goalVelocity};
+
+         */
+        return new double[]{0,0};
     }
 
     public double calculateAlignmentAngle() {

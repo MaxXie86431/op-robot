@@ -45,7 +45,7 @@ public class CloseRedAuto extends NextFTCOpMode {
     private static final Pose launchPose = new Pose(84, 84.3, Math.toRadians(45));
     private static final Pose outtatheWayPose = new Pose(94,65,Math.toRadians(300));
     private static final Pose parkPose = new Pose(38.5,34,225);
-    private static final Pose topRowEndPose = new Pose(120, 84.35, Math.toRadians(0));
+    private static final Pose topRowEndPose = new Pose(115, 84.35, Math.toRadians(0));
     private static final Pose middleRowStartPose = new Pose(84, 60, Math.toRadians(0));
     private static final Pose middleRowEndPose = new Pose(120, 60, Math.toRadians(0));
     private static final Pose bottomRowStartPose = new Pose(84, 36, Math.toRadians(0));
@@ -160,9 +160,9 @@ public class CloseRedAuto extends NextFTCOpMode {
     @Override
     public void onInit() {
         Flywheel.powerState = false;
+        Turret.powerState=false;
         debugTelemetry = telemetry;
-        // Initialize the follower with your constants
-        Flicker.INSTANCE.allDown();
+        Flicker.INSTANCE.flickThreeBalls().schedule();
         Turret.INSTANCE.zero();
         PoseStorage.setPose(startPose);
         follower().setStartingPose(startPose);

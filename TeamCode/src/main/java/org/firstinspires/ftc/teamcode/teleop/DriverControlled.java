@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import static dev.nextftc.extensions.pedro.PedroComponent.follower;
+
 import android.graphics.Color;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
+import org.firstinspires.ftc.teamcode.pedroPathing.Team;
 import org.firstinspires.ftc.teamcode.robot.ColorDetector;
 import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
@@ -66,23 +71,31 @@ public class DriverControlled extends NextFTCOpMode {
         telemetry.addData("Goal Velocity inside subsystem: ", Flywheel.launchVelocity); // goalVelocity);
         telemetry.addData("Encoder Value of Turret: ", Turret.INSTANCE.getEncoderValue());
         */
-
+        follower().update();
+        PoseStorage.setPose(follower().getPose());
+        telemetry.addData("Current pose", PoseStorage.getPose());
         telemetry.addData("color sensor values", ColorDetector.INSTANCE.getSensorValues());
         telemetry.addData("Goal velocity", Limelight.goalVelocity);
         telemetry.addData("LED is on", LED.on);
         telemetry.addData("Distance from goal inside subsystem", Flywheel.distanceToGoal);
         telemetry.addData("current RPM", Flywheel.INSTANCE.getVelocityRPM());
         telemetry.addData("encoder value", Turret.INSTANCE.getEncoderValue());
+        telemetry.addData("team:", Team.getTeam());
+        telemetry.addData("goal angle:", Turret.goalAngle);
+        telemetry.addData("actual angle needed to turn: ", -1*Turret.angle);
         telemetry.update();
         super.onUpdate();
     }
 
     @Override
     public void onInit() {
+        follower().setStartingPose(new Pose(72,72,Math.toRadians(90)));
+        PoseStorage.setPose(new Pose(72,72,Math.toRadians(90)));
         Flywheel.powerState = false;
         Turret.powerState = false;
-        Flicker.INSTANCE.allDown();
-        Turret.INSTANCE.setEncoderValue(0);
+        Turret.INSTANCE.zero();
+        Flicker.INSTANCE.flickThreeBalls().schedule();
+        Turret.INSTANCE.zero();
 
     }
 
@@ -140,6 +153,10 @@ public class DriverControlled extends NextFTCOpMode {
                 .whenBecomesTrue(() -> {
                     Flicker.INSTANCE.flick3Switch().schedule();
                 });
+        Gamepads.gamepad1().a()
+                .whenBecomesTrue(() -> {
+                    Turret.INSTANCE.autoAlignTrig().schedule();
+                });
 
         Gamepads.gamepad1().dpadUp()
                 .toggleOnBecomesTrue()
@@ -162,5 +179,6 @@ public class DriverControlled extends NextFTCOpMode {
                 .whenBecomesFalse(() -> {
                     Turret.INSTANCE.stop().schedule();
                 });
+
     }
 }

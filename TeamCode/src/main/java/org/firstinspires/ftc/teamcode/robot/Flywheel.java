@@ -26,6 +26,7 @@ public class Flywheel implements Subsystem{
     public static double kV = 0.0005;
     public static double kA = 0.05;
     public static double kS = 0.05;
+    private double lastKP, lastKI, lastKD, lastKV, lastKA, lastKS;
     public static double distanceToGoal = 0;
     public static double launchVelocity = 0;
     public static int tolerance = 30;
@@ -37,7 +38,7 @@ public class Flywheel implements Subsystem{
             .basicFF(kV, kA, kS)
             .build();
 
-    public static Flywheel INSTANCE = new Flywheel();
+    public static final Flywheel INSTANCE = new Flywheel();
     private Flywheel() { }
     private MotorEx motor = new MotorEx("Flywheel");
     public static int inVelocity = -1000;
@@ -47,7 +48,6 @@ public class Flywheel implements Subsystem{
 
     @Override
     public void initialize() {
-        motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         launchPower = 0.55;
     }
     public double getVelocityRPM(){
@@ -74,7 +74,11 @@ public class Flywheel implements Subsystem{
 
     public Command shutdown(){
         return new SequentialGroup(
-                new InstantCommand(() -> powerState = false),
+                new InstantCommand(() -> {
+                    powerState = false;
+                }
+                ),
+
                 new SetPower(motor, 0)
         ).requires(this);
     }
@@ -101,29 +105,52 @@ public class Flywheel implements Subsystem{
                     launchVelocity = values[1];
                 }),
                 out(launchVelocity),
+                new ParallelDeadlineGroup(
+                        new Delay(0.00265*launchVelocity-1.2),
+                        out(launchVelocity)
+                ),
                 Flicker.INSTANCE.flickThreeBalls()
         );
     }
 
     public Command constantShot(int velocity) {
         return new SequentialGroup(
-                out(velocity),
+                new ParallelDeadlineGroup(
+                        new Delay(0.00265*velocity-1.2),
+                        out(velocity)
+                ),
                 Flicker.INSTANCE.flickThreeBalls()
-        ).requires(this);
+        );
     }
 
-    public Command outPower() {
+    public Command outPower(double power) {
         //double ticksPerSecond = velocity * TICKS_PER_REVOLUTION / 60.0;
         return new SequentialGroup(
                 new InstantCommand(() -> powerState = false),
-                new SetPower(motor, launchPower)
-        ).requires(this);
+                new SetPower(motor, power)
+        );
     }
 
     @Override
     public void periodic() {
-        if(powerState)
+        /*
+        // 1. Check if any value from Panels has changed
+        if (kP != lastKP || kI != lastKI || kD != lastKD || kV != lastKV || kA != lastKA || kS != lastKS) {
+
+            // 2. Rebuild the controller with the NEW values
+            controller = ControlSystem.builder()
+                    .velPid(kP, kI, kD)
+                    .basicFF(kV, kA, kS)
+                    .build();
+
+            // 3. Update 'last' values so we don't rebuild every single loop
+            lastKP = kP; lastKI = kI; lastKD = kD;
+            lastKV = kV; lastKA = kA; lastKS = kS;
+        }
+        */
+        if (powerState) {
             motor.setPower(controller.calculate(motor.getState()));
+        }
     }
 
     public Command increasePower() {
@@ -136,7 +163,7 @@ public class Flywheel implements Subsystem{
 
     public Command decreasePower() {
         return new InstantCommand(() -> {
-            if (launchPower>0.05) {
+            if (launchPower>0.025) {
                 launchPower -= 0.025;
             }
         });

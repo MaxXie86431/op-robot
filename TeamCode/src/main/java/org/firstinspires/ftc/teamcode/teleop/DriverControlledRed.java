@@ -47,6 +47,7 @@ public class DriverControlledRed extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
+        follower().update();
         PoseStorage.setPose(follower().getPose());
 
         telemetry.addData("Current Pose: ", PoseStorage.getPose());
@@ -57,9 +58,10 @@ public class DriverControlledRed extends NextFTCOpMode {
         telemetry.addData("angle need to turn: ", Turret.angle);
         telemetry.addData("locked", Turret.locked);
         telemetry.addData("Sensor Values: ", ColorDetector.INSTANCE.getSensorValues());
+        telemetry.addData("current rpm", Flywheel.INSTANCE.getVelocityRPM());
         telemetry.update();
 
-
+        super.onUpdate();
     }
 
     @Override
@@ -69,7 +71,10 @@ public class DriverControlledRed extends NextFTCOpMode {
         Turret.locked = false;
         //PoseStorage.resetPose();
         follower().setStartingPose(PoseStorage.getPose());
+        follower().update();
         Team.setTeam(1);
+        telemetry.addData("angle need to turn: ", Turret.angle);
+        telemetry.update();
         //Turret.INSTANCE.zero();
 
     }
@@ -86,7 +91,7 @@ public class DriverControlledRed extends NextFTCOpMode {
 
 
         driverControlled.schedule();
-        Flicker.INSTANCE.allDown().schedule();
+        Flicker.INSTANCE.flickThreeBalls().schedule();
         Turret.INSTANCE.autoAlignPerpetual.schedule();
 
 
@@ -100,7 +105,7 @@ public class DriverControlledRed extends NextFTCOpMode {
 
         Gamepads.gamepad1().rightBumper()
                 .whenBecomesTrue(() -> {
-                    Flywheel.INSTANCE.constantShot(1100).schedule();
+                    Flywheel.INSTANCE.constantShot(1200).schedule();
                 })
                 .whenBecomesFalse(() -> {
                     Flywheel.INSTANCE.shutdown().schedule();

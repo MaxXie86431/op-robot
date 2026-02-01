@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.utils;
 
 import static org.firstinspires.ftc.teamcode.robot.Flywheel.launchPower;
 
+import com.bylazar.configurables.PanelsConfigurables;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -20,6 +21,7 @@ import java.util.List;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
+import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -34,7 +36,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 @Configurable
 @TeleOp(name = "regression")
 public class RegressionModel extends NextFTCOpMode {
-    private double power = 0.9;
+    public static double power = 0.65;
     private double distance;
     public static double anglefactor=-1.6;
     public static double goalHeightInches = 29.5;
@@ -63,7 +65,7 @@ public class RegressionModel extends NextFTCOpMode {
     public RegressionModel() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(Flicker.INSTANCE, Intake.INSTANCE, Flywheel.INSTANCE, ColorDetector.INSTANCE, LED.INSTANCE, Limelight.INSTANCE, Turret.INSTANCE),
+                new SubsystemComponent(Flywheel.INSTANCE, Intake.INSTANCE, Flicker.INSTANCE, Turret.INSTANCE, Limelight.INSTANCE, ColorDetector.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
@@ -87,12 +89,12 @@ public class RegressionModel extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-
+        PanelsConfigurables.INSTANCE.refreshClass(this);
 
     }
     @Override
     public void onStartButtonPressed() {
-
+        Flicker.INSTANCE.flickThreeBalls().schedule();
         driverControlled.schedule();
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.2)
@@ -104,24 +106,35 @@ public class RegressionModel extends NextFTCOpMode {
                 .whenBecomesFalse(() -> Flywheel.INSTANCE.shutdown().schedule());
 
         Gamepads.gamepad1().leftTrigger().greaterThan(0.2)
-                .whenBecomesTrue(() -> Intake.INSTANCE.in().schedule())
-                .whenBecomesFalse(() -> Intake.INSTANCE.stop().schedule());
+                .whenBecomesTrue(() -> {
+                    Intake.INSTANCE.in().schedule();
+                })
+                .whenBecomesFalse(() -> {
+                    new ParallelGroup(
+                            Intake.INSTANCE.stop(),
+                            Flicker.INSTANCE.flickdown1()
+                    ).schedule();
+                });
+
         Gamepads.gamepad1().leftBumper()
                 .whenBecomesTrue(() -> Intake.INSTANCE.out().schedule())
                 .whenBecomesFalse(() -> Intake.INSTANCE.stop().schedule());
         // △-Y, ○-B, ×-A, □-X
         Gamepads.gamepad1().x()
-                .whenBecomesTrue(() -> Flicker.INSTANCE.flick1Switch().schedule());
+                .whenBecomesTrue(() -> Flicker.INSTANCE.flick1().schedule());
         Gamepads.gamepad1().y()
-                .whenBecomesTrue(() -> Flicker.INSTANCE.flick2Switch().schedule());
+                .whenBecomesTrue(() -> Flicker.INSTANCE.flick2().schedule());
         Gamepads.gamepad1().b()
-                .whenBecomesTrue(() -> Flicker.INSTANCE.flick3Switch().schedule());
+                .whenBecomesTrue(() -> Flicker.INSTANCE.flick3().schedule());
 
         Gamepads.gamepad1().dpadDown()
                 .whenBecomesTrue(Flywheel.INSTANCE.decreasePower());
 
         Gamepads.gamepad1().dpadLeft()
                 .whenBecomesTrue(() -> Flicker.INSTANCE.flickThreeBalls().schedule());
+        Gamepads.gamepad1().dpadRight()
+                .whenBecomesTrue(() -> Flicker.INSTANCE.allDown().schedule());
+
 
         Gamepads.gamepad1().dpadUp()
                 .whenBecomesTrue(Flywheel.INSTANCE.increasePower());

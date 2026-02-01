@@ -157,6 +157,7 @@ public class FarRedAuto extends NextFTCOpMode {
     @Override
     public void onInit() {
         Flywheel.powerState = false;
+        Turret.powerState=false;
         debugTelemetry = telemetry;
         // Initialize the follower with your constants
         Flicker.INSTANCE.allDown().schedule();
