@@ -38,7 +38,7 @@ public class CloseBlue2RowAuto extends NextFTCOpMode {
     private static Pose launchPose = new Pose(59, 82, Math.toRadians(135));
     private static Pose outtatheWayPose = new Pose(50,65,240);
     private static Pose parkPose = new Pose(38.5,34,225);
-    private static Pose topRowEndPose = new Pose(18, 82, Math.toRadians(180));
+    private static Pose topRowEndPose = new Pose(20, 82, Math.toRadians(180));
     private static Pose middleRowStartPose = new Pose(59, 56, Math.toRadians(180));
     private static Pose middleRowEndPose = new Pose(15, 56, Math.toRadians(180));
     private static Pose bottomRowStartPose = new Pose(59, 34, Math.toRadians(180));

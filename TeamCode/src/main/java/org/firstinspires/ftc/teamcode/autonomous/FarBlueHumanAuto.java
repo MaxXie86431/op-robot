@@ -32,6 +32,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 @Configurable
 @Autonomous(name = "Far Human Blue Auto")
 public class FarBlueHumanAuto extends NextFTCOpMode {
+
     public static Pose startPose = new Pose(59, 13, Math.toRadians(112));
     private static final Pose humanPlayerPose = new Pose(12, 10, Math.toRadians(180));
     public static int FAR_SPEED = 1520;

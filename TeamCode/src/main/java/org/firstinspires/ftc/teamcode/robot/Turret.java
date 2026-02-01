@@ -38,6 +38,8 @@ public class Turret implements Subsystem {
     public static int leftBound = -950;
     public static boolean locked = false;
     private static double power;
+    public static double blueGoalX=12;
+    public static double blueGoalY=132;
 
     private final ControlSystem controller = ControlSystem.builder()
             .posPid(kP, kI, kD)
@@ -102,26 +104,16 @@ public class Turret implements Subsystem {
         );
     }
 
-
-    public Command autoAlignTrig() {
+    public double getMoveAngle(){
         //double turretPos = -1 * getDegrees();
         //double angle = (heading-tagPos) + (turretPos-90);
         heading = PoseStorage.getHeadingDegrees();
         if (Team.getTeam() == 0) {
             //goalAngle = (180-(Math.toDegrees(Math.atan2(132 - PoseStorage.getY(), PoseStorage.getX()-15))));
-            goalAngle = (180-(Math.toDegrees(Math.atan2(132 - PoseStorage.getY(), PoseStorage.getX()-12))));
-            angle = goalAngle-heading+getDegrees();
-            if (angle >= 0) {
-                if (angle >= 180) {
-                    angle = 360 - angle;
-                }
-            }
-            else if (angle < 0) {
-                if (angle <= -180) {
-                    angle = angle + 360;
-                }
-            }
-            return turnByDegrees(-angle);
+            goalAngle = (180-(Math.toDegrees(Math.atan2(blueGoalY - PoseStorage.getY(), PoseStorage.getX()-blueGoalX))));
+            angle = heading+getDegrees()-goalAngle;
+            return angle;
+            //return turnByDegrees((heading>goalAngle?-angle:angle));
         }
         else {
             //goalAngle = Math.toDegrees(Math.atan2(132 - PoseStorage.getY(), 129 - PoseStorage.getX()));
@@ -137,13 +129,13 @@ public class Turret implements Subsystem {
                     angle = angle + 360;
                 }
             }
-            return turnByDegrees(-angle);
+            return -1 * angle;
         }
+    }
 
-
-
-        //return turnByDegrees(-angle);
-
+    public Command autoAlignTrig() {
+        angle = getMoveAngle();
+        return turnByDegrees(angle);
     }
 
 
@@ -152,7 +144,6 @@ public class Turret implements Subsystem {
                 autoAlignTrig().schedule();
             })
             .perpetually();
-
 
 
     public double getEncoderValue(){

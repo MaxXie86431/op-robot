@@ -79,11 +79,11 @@ public class FarRedAuto extends NextFTCOpMode {
                         //new FollowPath(initialLaunchPath),
                         Flywheel.INSTANCE.out(FAR_SPEED)
                 ),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBalls(),
                 new FollowPath(initialToBottomStart),
                 new FollowPath(bottomRowPath),
                 Flywheel.INSTANCE.out(FIRST_SPEED),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBalls(),
                 new FollowPath(middleRowPath),
                 Flywheel.INSTANCE.constantShot(SECOND_SPEED),
                 Flicker.INSTANCE.flickTwo(1),
