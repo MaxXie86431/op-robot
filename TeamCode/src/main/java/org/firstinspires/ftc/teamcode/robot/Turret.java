@@ -18,57 +18,49 @@ import dev.nextftc.hardware.powerable.SetPower;
 
 @Configurable
 public class Turret implements Subsystem {
-    //-1000 1700
-    public static double kP = 0.005;
-    public static double kI = 0;
-    public static double kD = 0;
-    public static double kV = 0.025;
-    public static double kA = 0.02;
-    public static double kS = 0.03;
-    public static double velocity = 0.5;
-    public static double ticksPerRev = 753.2;
-    public static double rotationRatio = 0.22;
-    public static double positionPerDegree = 9.51;
-    public static boolean powerState = false;
-    public static double goalAngle;
-    public static double heading;
-    public static double angle;
-    public static int tolerance= 50;
-    public static int rightBound = 1800;
-    public static int leftBound = -950;
-    public static boolean locked = false;
-    private static double power;
-    public static double blueGoalX=12;
-    public static double blueGoalY=132;
 
-    private final ControlSystem controller = ControlSystem.builder()
-            .posPid(kP, kI, kD)
-            //.basicFF()
-            .basicFF(kV, kA, kS)
-            .build();
+    //PID Variable
+    public static double kP = 0.005, kI = 0, kD = 0;
+    //Feed Forward Values
+    public static double kV = 0.025, kA = 0.02, kS = 0.03;
+
+    public static double MANUAL_SPEED = 0.5;
+    public static double TICKS_PER_DEGREE = 9.51;
+    public static int RIGHT_BOUND_TICKS = 1800;
+    public static int LEFT_BOUND_TICKS = -950;
+
+    private static final double TARGET_X_BLUE = 12.0, TARGET_X_RED =126.0, TARGET_Y = 132;
+
+    public static boolean locked = false;
+    public static boolean powerState = false;
+    private static double power;
+    private MotorEx turretMotor;
 
     public static final Turret INSTANCE = new Turret();
-
-    private MotorEx turretMotor;
 
     private Turret() {}
 
     @Override
     public void initialize() {
-        turretMotor = new MotorEx("Turret-Gear").reversed().brakeMode();
+        turretMotor = new MotorEx("Turret-Gear").reversed().zeroed().brakeMode();
     }
+
+    private final ControlSystem controller = ControlSystem.builder()
+            .posPid(kP, kI, kD)
+            .basicFF(kV, kA, kS)
+            .build();
 
     public Command turnRight() {
         return new SequentialGroup(
                 new InstantCommand(() -> powerState = false),
-                new SetPower(turretMotor, velocity)
+                new SetPower(turretMotor, MANUAL_SPEED)
         );
     }
 
     public Command turnLeft(){
         return new SequentialGroup(
             new InstantCommand(() -> powerState = false),
-            new SetPower(turretMotor, -1 * velocity)
+            new SetPower(turretMotor, -1 * MANUAL_SPEED)
         );
     }
 
@@ -83,106 +75,72 @@ public class Turret implements Subsystem {
         turretMotor.zero();
     }
 
-    public Command goToZero(){
-        return new SequentialGroup(
-                new InstantCommand(() -> powerState = true),
-                new RunToPosition(controller, 0)
-        ).requires(this);
-    }
-
     public Command turnByDegrees(double degrees){
         return new SequentialGroup(
             new InstantCommand(() -> powerState = true),
-            new RunToPosition(controller, turretMotor.getCurrentPosition()  + degrees * positionPerDegree)
+            new RunToPosition(controller, turretMotor.getCurrentPosition()  + degrees * TICKS_PER_DEGREE)
         );
     }
 
     public Command turnToDegrees(double degrees){
         return new SequentialGroup(
                 new InstantCommand(() -> powerState = true),
-                new RunToPosition(controller, degrees * positionPerDegree)
+                new RunToPosition(controller, degrees * TICKS_PER_DEGREE)
         );
     }
 
-    public double getMoveAngle(){
-        //double turretPos = -1 * getDegrees();
-        //double angle = (heading-tagPos) + (turretPos-90);
-        heading = PoseStorage.getHeadingDegrees();
-        if (Team.getTeam() == 0) {
-            //goalAngle = (180-(Math.toDegrees(Math.atan2(132 - PoseStorage.getY(), PoseStorage.getX()-15))));
-            goalAngle = (180-(Math.toDegrees(Math.atan2(blueGoalY - PoseStorage.getY(), PoseStorage.getX()-blueGoalX))));
-            angle = heading+getDegrees()-goalAngle;
-            return angle;
-            //return turnByDegrees((heading>goalAngle?-angle:angle));
-        }
-        else {
-            //goalAngle = Math.toDegrees(Math.atan2(132 - PoseStorage.getY(), 129 - PoseStorage.getX()));
-            goalAngle = Math.toDegrees(Math.atan2(132 - PoseStorage.getY(), 126 - PoseStorage.getX()));
-            angle = goalAngle-heading+getDegrees();
-            if (angle >= 0) {
-                if (angle >= 180) {
-                    angle = 360 - angle;
-                }
-            }
-            else if (angle < 0) {
-                if (angle <= -180) {
-                    angle = angle + 360;
-                }
-            }
-            return -1 * angle;
-        }
+
+    public double getTargetTurretAngle() {
+        double robotHeading = PoseStorage.getHeadingDegrees();
+        double fieldAngleToTarget = getFieldTargetAngle();
+        return normalizeAngle(robotHeading - fieldAngleToTarget);
     }
 
-    public Command autoAlignTrig() {
-        angle = getMoveAngle();
-        return turnByDegrees(angle);
+    public double getFieldTargetAngle(){
+        double targetX = (Team.getTeam() == 0) ? TARGET_X_BLUE : TARGET_X_RED;
+        double deltaX = targetX - PoseStorage.getX();
+        double deltaY = TARGET_Y - PoseStorage.getY();
+        return Math.toDegrees(Math.atan2(deltaY, deltaX));
     }
 
+    public Command autoAlign() {
+        return turnToDegrees(getTargetTurretAngle());
+    }
+
+    private double normalizeAngle(double angle) {
+        while (angle > 180)  angle -= 360;
+        while (angle <= -180) angle += 360;
+        return angle;
+    }
 
     public Command autoAlignPerpetual = new LambdaCommand()
             .setUpdate(() -> {
-                autoAlignTrig().schedule();
+                autoAlign().schedule();
             })
             .perpetually();
-
 
     public double getEncoderValue(){
         return turretMotor.getCurrentPosition();
     }
-    public double getDegrees() {
-        return getEncoderValue()/positionPerDegree;
-    }
 
+    public double getDegrees() {
+        return getEncoderValue()/ TICKS_PER_DEGREE;
+    }
 
     public void setEncoderValue(int pos) {
         turretMotor.setCurrentPosition(pos);
     }
 
-
     public Command autoTrackButton() {
         double angle = Limelight.INSTANCE.calculateAlignmentAngle();
         if (angle != 0) {
             return turnByDegrees(angle);
-
         }
         return new NullCommand();
     }
 
-
-
     @Override
     public void periodic() {
-        /*
-        if (getEncoderValue() > leftBound && getEncoderValue() < rightBound) {
-            if (powerState) {
-                turretMotor.setPower(controller.calculate(turretMotor.getState()));
-            }
-        }
-        else {
-                turretMotor.setPower(0);
-                locked = true;
-        }
-        */
         if (powerState) {
             power = controller.calculate(turretMotor.getState());
         }
@@ -190,24 +148,14 @@ public class Turret implements Subsystem {
         double pos = getEncoderValue();
 
 
-        if (pos >= rightBound && power > 0) {
+        if (pos >= RIGHT_BOUND_TICKS && power > 0) {
             power = 0;
         }
 
-
-        if (pos <= leftBound && power < 0) {
+        if (pos <= LEFT_BOUND_TICKS && power < 0) {
             power = 0;
         }
 
         turretMotor.setPower(power);
-
-
-
-        /*
-        directions mean actually turning the turret (eg right means turning turret all the way right)
-        - right bound: 1900 encoder, 200 degrees of turret
-        - left bound: -1050 encoder, -110.75 degrees of turret
-         */
-
     }
 }

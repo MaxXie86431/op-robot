@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.robot.LED;
 import org.firstinspires.ftc.teamcode.robot.Limelight;
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.robot.Turret;
@@ -56,12 +55,18 @@ public class DriverControlledBlue extends NextFTCOpMode {
     }
 
     private void telemetryUpdate(){
+        telemetry.addData("Heading Angle: ", PoseStorage.getHeadingDegrees());
+        telemetry.addData("Goal Angle: ", Turret.INSTANCE.getFieldTargetAngle());
+        telemetry.addData("Target Turret Angle: ", Turret.INSTANCE.getTargetTurretAngle());
+        telemetry.addData("Current Turret Angle: ", Turret.INSTANCE.getDegrees());
+
         telemetry.addData("Current Pose: ", PoseStorage.getPose());
+
         telemetry.addData("Current Angle: ", ((PoseStorage.getHeadingDegrees())));
         telemetry.addData("Turret pos: ", Turret.INSTANCE.getDegrees());
         telemetry.addData("Turret encoders: ", Turret.INSTANCE.getEncoderValue());
-        telemetry.addData("goal angle: ", Turret.goalAngle);
-        telemetry.addData("angle need to turn: ", Turret.INSTANCE.getMoveAngle());
+        telemetry.addData("goal angle: ", Turret.INSTANCE.getFieldTargetAngle());
+        telemetry.addData("angle need to turn: ", Turret.INSTANCE.getTargetTurretAngle());
         telemetry.addData("locked", Turret.locked);
         telemetry.addData("Sensor Values: ", ColorDetector.INSTANCE.getSensorValues());
         telemetry.addData("current rpm", Flywheel.INSTANCE.getVelocityRPM());
@@ -96,7 +101,7 @@ public class DriverControlledBlue extends NextFTCOpMode {
 
         driverControlled.schedule();
         Flicker.INSTANCE.flickThreeBalls().schedule();
-        Turret.INSTANCE.autoAlignTrig().schedule();
+        Turret.INSTANCE.autoAlignPerpetual.schedule();
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.2)
                 .whenBecomesTrue(() -> {

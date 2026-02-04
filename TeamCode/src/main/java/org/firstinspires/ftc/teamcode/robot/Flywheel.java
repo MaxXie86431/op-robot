@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
@@ -20,41 +21,40 @@ import dev.nextftc.core.commands.utility.InstantCommand;
 
 @Configurable
 public class Flywheel implements Subsystem{
+
+    //PIDF Constants
     public static double kP = 0.005;
     public static double kI = 0;
     public static double kD = 0.01;
     public static double kV = 0.0005;
     public static double kA = 0.05;
     public static double kS = 0.05;
-    private double lastKP, lastKI, lastKD, lastKV, lastKA, lastKS;
+    private double lastKP, lastKI, lastKD, lastKV, lastKA, lastKS; //Enabled for tuning PIDF
+
     public static double distanceToGoal = 0;
     public static double launchVelocity = 0;
     public static int tolerance = 30;
 
     public static boolean powerState = false;
 
-    private ControlSystem controller = ControlSystem.builder()
+    private final ControlSystem controller = ControlSystem.builder()
             .velPid(kP, kI, kD)
             .basicFF(kV, kA, kS)
             .build();
 
     public static final Flywheel INSTANCE = new Flywheel();
     private Flywheel() { }
-    private MotorEx motor = new MotorEx("Flywheel");
+    private final MotorEx motor = new MotorEx("Flywheel");
     public static int inVelocity = -1000;
-    public static double launchBuffer = 2;
     public static double launchPower;
-    private double currentTargetVelocity = 0;
 
     @Override
     public void initialize() {
         launchPower = 0.55;
     }
+
     public double getVelocityRPM(){
-        double ticksPerSecond = motor.getVelocity();
-        /*double revPerSec = ticksPerSecond / TICKS_PER_REVOLUTION;
-        double degreesPerSecond = revPerSec * 360;*/
-        return ticksPerSecond;
+        return motor.getVelocity();
     }
 
     public Command out(double velocity) {
@@ -62,6 +62,42 @@ public class Flywheel implements Subsystem{
         return new SequentialGroup(
                 new InstantCommand(() -> powerState = true),
                 new RunToVelocity(controller, velocity, tolerance)
+        ).requires(this);
+    }
+
+    private final ElapsedTime rampTimer = new ElapsedTime();
+
+    public Command rampedOut(double targetVelocity) {
+        return new SequentialGroup(
+                out(targetVelocity * 0.4), // 1. Start at 40% speed (e.g. ~600 RPM)
+                new Delay(0.7),            // 2. Let it stabilize
+                out(targetVelocity * 0.7), // 3. Bump to 70% (e.g. ~1000 RPM)
+                new Delay(0.7),            // 4. Let it stabilize
+                out(targetVelocity)        // 5. Final target of 1490 RPM
+        );
+    }
+
+    public Command smoothRamp(double targetVelocity, double durationSeconds) {
+        return new SequentialGroup(
+                // 1. Reset the timer at the very beginning
+                new InstantCommand(() -> {
+                    powerState = true;
+                    rampTimer.reset();
+                }),
+                // 2. Use a Deadline Group to force the loop to end after durationSeconds
+                new ParallelDeadlineGroup(
+                        new Delay(durationSeconds), // The "Deadline" - group stops when this finishes
+                        new LambdaCommand()
+                                .setUpdate(() -> {
+                                    double elapsed = rampTimer.seconds();
+                                    double progress = Math.min(elapsed / durationSeconds, 1.0);
+                                    double currentTarget = progress * targetVelocity;
+
+                                    // Update the motor target every loop
+                                    out(currentTarget).schedule();
+                                })
+                                .perpetually() // Tell the Lambda to run until the Deadline stops it
+                )
         ).requires(this);
     }
 

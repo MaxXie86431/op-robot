@@ -25,7 +25,6 @@ import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
-import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
@@ -157,7 +156,7 @@ public class FarBlueAuto extends NextFTCOpMode {
     public void onInit() {
 
         Flywheel.powerState = false;
-        Turret.powerState=false;
+        Turret.powerState =false;
         debugTelemetry = telemetry;
         // Initialize the follower with your constants
         Flicker.INSTANCE.allDown().schedule();

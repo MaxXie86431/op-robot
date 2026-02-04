@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
-import android.graphics.Color;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -81,8 +79,8 @@ public class DriverControlled extends NextFTCOpMode {
         telemetry.addData("current RPM", Flywheel.INSTANCE.getVelocityRPM());
         telemetry.addData("encoder value", Turret.INSTANCE.getEncoderValue());
         telemetry.addData("team:", Team.getTeam());
-        telemetry.addData("goal angle:", Turret.goalAngle);
-        telemetry.addData("actual angle needed to turn: ", -1*Turret.angle);
+        telemetry.addData("goal angle:", Turret.INSTANCE.getFieldTargetAngle());
+        telemetry.addData("actual angle needed to turn: ", Turret.INSTANCE.getTargetTurretAngle());
         telemetry.update();
         super.onUpdate();
     }
@@ -155,7 +153,7 @@ public class DriverControlled extends NextFTCOpMode {
                 });
         Gamepads.gamepad1().a()
                 .whenBecomesTrue(() -> {
-                    Turret.INSTANCE.autoAlignTrig().schedule();
+                    Turret.INSTANCE.autoAlign().schedule();
                 });
 
         Gamepads.gamepad1().dpadUp()

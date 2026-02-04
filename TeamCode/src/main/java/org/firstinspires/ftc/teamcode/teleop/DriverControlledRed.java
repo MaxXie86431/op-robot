@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.robot.LED;
 import org.firstinspires.ftc.teamcode.robot.Limelight;
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.robot.Turret;
@@ -54,8 +53,8 @@ public class DriverControlledRed extends NextFTCOpMode {
         telemetry.addData("Current Angle: ", ((PoseStorage.getPose().getHeading())*180.0/Math.PI));
         telemetry.addData("Turret pos: ", Turret.INSTANCE.getDegrees());
         telemetry.addData("Turret encoders: ", Turret.INSTANCE.getEncoderValue());
-        telemetry.addData("goal angle: ", Turret.goalAngle);
-        telemetry.addData("angle need to turn: ", Turret.angle);
+        telemetry.addData("goal angle: ", Turret.INSTANCE.getFieldTargetAngle());
+        telemetry.addData("angle need to turn: ", Turret.INSTANCE.getTargetTurretAngle());
         telemetry.addData("locked", Turret.locked);
         telemetry.addData("Sensor Values: ", ColorDetector.INSTANCE.getSensorValues());
         telemetry.addData("current rpm", Flywheel.INSTANCE.getVelocityRPM());
@@ -73,7 +72,7 @@ public class DriverControlledRed extends NextFTCOpMode {
         follower().setStartingPose(PoseStorage.getPose());
         follower().update();
         Team.setTeam(1);
-        telemetry.addData("angle need to turn: ", Turret.angle);
+        telemetry.addData("angle need to turn: ", Turret.INSTANCE.getTargetTurretAngle());
         telemetry.update();
         //Turret.INSTANCE.zero();
 

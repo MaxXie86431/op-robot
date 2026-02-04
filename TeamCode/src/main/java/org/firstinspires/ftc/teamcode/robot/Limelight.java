@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import static org.firstinspires.ftc.teamcode.robot.Turret.goalAngle;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
