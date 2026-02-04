@@ -43,7 +43,7 @@ public class Flicker implements Subsystem {
     public static double down2 = 0.94;
     public static double up3 = 0.8;
     public static double down3 = 0;
-    public static double bumper = 0.175;
+    public static double bumper = 0.155;
 
     public Command flick1() {
         return new SequentialGroup(

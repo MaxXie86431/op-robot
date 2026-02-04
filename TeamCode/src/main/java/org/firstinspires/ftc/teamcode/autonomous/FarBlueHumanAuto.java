@@ -34,7 +34,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 @Autonomous(name = "Far Human Blue Auto")
 public class FarBlueHumanAuto extends NextFTCOpMode {
 
-    public static Pose startPose = new Pose(59, 13, Math.toRadians(112));
+    public static Pose startPose = new Pose(59, 13, Math.toRadians(180));
     private static final Pose humanPlayerPose = new Pose(14, 14, Math.toRadians(180));
     //private static final Pose firstTwoPose = new Pose(13, 16, Math.toRadians(180));
     //private static final Pose lastOnePose = new Pose(13, 12, Math.toRadians(180));
@@ -46,6 +46,7 @@ public class FarBlueHumanAuto extends NextFTCOpMode {
     private PathChain outtaTheWay;
     static PoseHistory poseHistory;
     private Telemetry debugTelemetry;
+    public static double initialAngle = 71;
 
 
 
@@ -111,6 +112,7 @@ public class FarBlueHumanAuto extends NextFTCOpMode {
         Turret.powerState = false;
         Turret.locked = false;
         Turret.INSTANCE.setEncoderValue(0);
+        Turret.INSTANCE.turnByDegrees(initialAngle).schedule();
         Intake.INSTANCE.stop();
         //PoseStorage.resetPose();
 

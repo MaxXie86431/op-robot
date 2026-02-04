@@ -32,8 +32,9 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 @Configurable
 @Autonomous(name = "Far Human Red Auto")
 public class FarRedHumanAuto extends NextFTCOpMode {
-    private static final Pose startPose = new Pose(88, 13, Math.toRadians(72));
-    private static final Pose humanPlayerPose = new Pose(133, 10, Math.toRadians(0));
+    private static final Pose startPose = new Pose(85, 13, Math.toRadians(0));
+    private static final Pose humanPlayerPose = new Pose(130, 14, Math.toRadians(0));
+    private static final Pose moveBackPose = new Pose(104, 14,Math.toRadians(0));
     public static int FAR_SPEED = 1520;
     public static double initialDelay = 10;
     public static double delayBetweenCycles = 2;
@@ -41,6 +42,7 @@ public class FarRedHumanAuto extends NextFTCOpMode {
     private PathChain outtaTheWay;
     static PoseHistory poseHistory;
     private Telemetry debugTelemetry;
+    public static double initialAngle = 0;
 
 
 
@@ -95,23 +97,31 @@ public class FarRedHumanAuto extends NextFTCOpMode {
                     debugTelemetry.update();
                     Intake.INSTANCE.in().schedule();
                 })
+                .addPath(new BezierLine(humanPlayerPose, moveBackPose))
+                .setConstantHeadingInterpolation(humanPlayerPose.getHeading())
+                .addPath(new BezierLine(moveBackPose, humanPlayerPose))
                 .addPath(new BezierLine(humanPlayerPose, startPose))
-                .addParametricCallback(0.2, () -> {
-                    debugTelemetry.addData("CALLBACK", "humanPlayerPath stop triggered");
-                    debugTelemetry.update();
-                    Intake.INSTANCE.stop().schedule();
-                })
                 .setLinearHeadingInterpolation(humanPlayerPose.getHeading(), startPose.getHeading())
                 .build();
         outtaTheWay = follower().pathBuilder()
                 .addPath(new BezierLine(startPose, humanPlayerPose))
                 .setLinearHeadingInterpolation(startPose.getHeading(), humanPlayerPose.getHeading())
+                .addParametricCallback(0.2, () -> {
+                    debugTelemetry.addData("CALLBACK", "humanPlayerPath stop triggered");
+                    debugTelemetry.update();
+                    Intake.INSTANCE.stop().schedule();
+                })
                 .build();
     }
 
     @Override
     public void onInit() {
         Flywheel.powerState = false;
+        Turret.locked = false;
+        Turret.powerState = false;
+        Turret.INSTANCE.setEncoderValue(0);
+        Turret.INSTANCE.turnByDegrees(initialAngle).schedule();
+        Intake.INSTANCE.stop();
         debugTelemetry = telemetry;
         // Initialize the follower with your constants
         Flicker.INSTANCE.allDown().schedule();
