@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Team;
@@ -9,7 +10,6 @@ import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.robot.LED;
 import org.firstinspires.ftc.teamcode.robot.Limelight;
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.robot.Turret;
@@ -49,19 +49,22 @@ public class DriverControlledBlue extends NextFTCOpMode {
     public void onUpdate() {
         follower().update();
         PoseStorage.setPose(follower().getPose());
+        telemetryUpdate();
+        super.onUpdate();
 
+    }
+
+    private void telemetryUpdate(){
         telemetry.addData("Current Pose: ", PoseStorage.getPose());
-        telemetry.addData("Current Angle: ", ((PoseStorage.getPose().getHeading())*180.0/Math.PI));
+        telemetry.addData("Current Angle: ", ((PoseStorage.getHeadingDegrees())));
         telemetry.addData("Turret pos: ", Turret.INSTANCE.getDegrees());
         telemetry.addData("Turret encoders: ", Turret.INSTANCE.getEncoderValue());
         telemetry.addData("goal angle: ", Turret.goalAngle);
-        telemetry.addData("angle need to turn: ", Turret.angle);
+        telemetry.addData("angle need to turn: ", Turret.INSTANCE.getMoveAngle());
         telemetry.addData("locked", Turret.locked);
         telemetry.addData("Sensor Values: ", ColorDetector.INSTANCE.getSensorValues());
         telemetry.addData("current rpm", Flywheel.INSTANCE.getVelocityRPM());
         telemetry.update();
-        super.onUpdate();
-
     }
 
     @Override
@@ -69,10 +72,12 @@ public class DriverControlledBlue extends NextFTCOpMode {
         Flywheel.powerState = false;
         Turret.powerState = false;
         Turret.locked = false;
+        Turret.INSTANCE.setEncoderValue(0);
         //PoseStorage.resetPose();
         follower().setStartingPose(PoseStorage.getPose());
         follower().update();
         Team.setTeam(0);
+        telemetryUpdate();
         //Turret.INSTANCE.zero();
 
     }
@@ -90,8 +95,7 @@ public class DriverControlledBlue extends NextFTCOpMode {
 
         driverControlled.schedule();
         Flicker.INSTANCE.flickThreeBalls().schedule();
-        Turret.INSTANCE.autoAlignPerpetual.schedule();
-
+        Turret.INSTANCE.autoAlignTrig().schedule();
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.2)
                 .whenBecomesTrue(() -> {
@@ -130,8 +134,6 @@ public class DriverControlledBlue extends NextFTCOpMode {
                     Intake.INSTANCE.stop().schedule();
                 });
 
-
-
         Gamepads.gamepad1().a().toggleOnBecomesTrue()
                 .whenBecomesTrue(() -> {
                     driverControlled.setScalar(speed);
@@ -156,11 +158,6 @@ public class DriverControlledBlue extends NextFTCOpMode {
                     Flicker.INSTANCE.flick1().schedule();
                 });
 
-
-
-
-
-
         Gamepads.gamepad1().dpadLeft()
                 .whenBecomesTrue(() -> {
                     Turret.INSTANCE.turnLeft().schedule();
@@ -184,7 +181,6 @@ public class DriverControlledBlue extends NextFTCOpMode {
                     Turret.INSTANCE.autoAlignPerpetual.schedule();
                 });
 
-
         Gamepads.gamepad1().dpadDown()
                 .whenBecomesTrue(() -> {
                     Flywheel.INSTANCE.reverse().schedule();
@@ -193,8 +189,11 @@ public class DriverControlledBlue extends NextFTCOpMode {
                     Flywheel.INSTANCE.shutdown().schedule();
                 });
 
-
-
+        Gamepads.gamepad1().leftStickButton()
+                .whenBecomesTrue(() -> {
+                    follower().setStartingPose(new Pose(72,72,Math.toRadians(90)));
+                    PoseStorage.setPose(new Pose(72,72,Math.toRadians(90)));
+                });
 
     }
 }

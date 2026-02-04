@@ -45,6 +45,7 @@ public class Intake implements Subsystem {
     }
 
     public Command out(){
+
         return new SetPower(intakeMotor, -0.7).requires(this);
     }
 

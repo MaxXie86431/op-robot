@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawCurrent;
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawCurrentAndHistory;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -12,10 +9,8 @@ import com.pedropathing.util.PoseHistory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
@@ -25,14 +20,12 @@ import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
-import org.firstinspires.ftc.teamcode.pedroPathing.Tuning;
 import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.robot.Limelight;
 
 import dev.nextftc.ftc.components.BulkReadComponent;
-import kotlin.time.Instant;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.robot.Turret;
@@ -53,7 +46,7 @@ public class CloseBlueAuto extends NextFTCOpMode {
 
     public static double wait = 2;
     private PathChain initialLaunchPath, initialOut, outtaTheWayPath, topRowPath, middleRowPath, bottomRowPath, parkPath;
-    public static int CLOSE_SPEED = 1200;
+    public static int CLOSE_SPEED = 1150;
     static PoseHistory poseHistory;
     private Telemetry debugTelemetry;
 
@@ -75,13 +68,13 @@ public class CloseBlueAuto extends NextFTCOpMode {
                         new FollowPath(initialLaunchPath),
                         Flywheel.INSTANCE.out(CLOSE_SPEED)
                 ),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(topRowPath),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(middleRowPath),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(bottomRowPath),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
 
                 Flywheel.INSTANCE.shutdown(),
                 new FollowPath(outtaTheWayPath)
@@ -162,7 +155,7 @@ public class CloseBlueAuto extends NextFTCOpMode {
         Turret.powerState=false;
         debugTelemetry = telemetry;
         Turret.INSTANCE.zero();
-        Flicker.INSTANCE.flickThreeBalls().schedule();
+        Flicker.INSTANCE.flickThreeBallsAuto().schedule();
         //Turret.INSTANCE.setEncoderValue(0);
         // Initialize the follower with your constants
         follower().setStartingPose(startPose);

@@ -32,6 +32,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 @Configurable
 @Autonomous(name = "Far Human Blue Auto")
 public class FarBlueHumanAuto extends NextFTCOpMode {
+
     public static Pose startPose = new Pose(59, 13, Math.toRadians(112));
     private static final Pose humanPlayerPose = new Pose(12, 10, Math.toRadians(180));
     public static int FAR_SPEED = 1520;
@@ -60,26 +61,26 @@ public class FarBlueHumanAuto extends NextFTCOpMode {
                         //new FollowPath(initialLaunchPath),
                         Flywheel.INSTANCE.out(FAR_SPEED)
                 ),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
 
                 new Delay(initialDelay),
                 new FollowPath(initialToHumanPlayer),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new Delay(delayBetweenCycles),
                 new FollowPath(initialToHumanPlayer),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new Delay(delayBetweenCycles),
                 new FollowPath(initialToHumanPlayer),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new Delay(delayBetweenCycles),
                 new FollowPath(initialToHumanPlayer),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new Delay(delayBetweenCycles),
                 new FollowPath(initialToHumanPlayer),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new Delay(delayBetweenCycles),
                 new FollowPath(initialToHumanPlayer),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new Delay(delayBetweenCycles),
 
                 Flywheel.INSTANCE.shutdown(),

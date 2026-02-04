@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.robot.Limelight;
 import org.firstinspires.ftc.teamcode.robot.Turret;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -78,7 +79,9 @@ public class FarBlue0RowAuto extends NextFTCOpMode {
                         //new FollowPath(initialLaunchPath),
                         Flywheel.INSTANCE.out(FAR_SPEED)
                 ),
-                Flicker.INSTANCE.flickTwo(1),
+                new Delay(2),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
+                new Delay(2),
                 new FollowPath(initialToBottomStart),
 
                 Flywheel.INSTANCE.shutdown(),

@@ -1,15 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.commands.utility.LambdaCommand;
-import dev.nextftc.core.commands.utility.NullCommand;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.control.ControlSystem;
@@ -109,7 +105,7 @@ public class Flywheel implements Subsystem{
                         new Delay(0.00265*launchVelocity-1.2),
                         out(launchVelocity)
                 ),
-                Flicker.INSTANCE.flickThreeBalls()
+                Flicker.INSTANCE.flickThreeBallsAuto()
         );
     }
 
@@ -119,7 +115,7 @@ public class Flywheel implements Subsystem{
                         new Delay(0.00265*velocity-1.2),
                         out(velocity)
                 ),
-                Flicker.INSTANCE.flickThreeBalls()
+                Flicker.INSTANCE.flickThreeBallsAuto()
         );
     }
 

@@ -11,12 +11,9 @@ import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
 import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.robot.LED;
 import org.firstinspires.ftc.teamcode.robot.Limelight;
 import org.firstinspires.ftc.teamcode.robot.Turret;
 
-
-import java.util.List;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
@@ -94,7 +91,7 @@ public class RegressionModel extends NextFTCOpMode {
     }
     @Override
     public void onStartButtonPressed() {
-        Flicker.INSTANCE.flickThreeBalls().schedule();
+        Flicker.INSTANCE.flickThreeBallsAuto().schedule();
         driverControlled.schedule();
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.2)
@@ -131,7 +128,7 @@ public class RegressionModel extends NextFTCOpMode {
                 .whenBecomesTrue(Flywheel.INSTANCE.decreasePower());
 
         Gamepads.gamepad1().dpadLeft()
-                .whenBecomesTrue(() -> Flicker.INSTANCE.flickThreeBalls().schedule());
+                .whenBecomesTrue(() -> Flicker.INSTANCE.flickThreeBallsAuto().schedule());
         Gamepads.gamepad1().dpadRight()
                 .whenBecomesTrue(() -> Flicker.INSTANCE.allDown().schedule());
 

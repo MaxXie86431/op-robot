@@ -32,7 +32,6 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 @Autonomous(name = "Far 2 Row Red Auto")
 public class FarRed2RowAuto extends NextFTCOpMode {
 
-
     private static final Pose startPose = new Pose(88, 8, Math.toRadians(72));
     private static final Pose frontLaunchPose = new Pose(85, 85, Math.toRadians(45));
     private static final Pose topRowStartPose = new Pose(100, 84.35, Math.toRadians(0));
@@ -79,14 +78,14 @@ public class FarRed2RowAuto extends NextFTCOpMode {
                         //new FollowPath(initialLaunchPath),
                         Flywheel.INSTANCE.out(FAR_SPEED)
                 ),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(initialToBottomStart),
                 new FollowPath(bottomRowPath),
                 Flywheel.INSTANCE.out(FIRST_SPEED),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(middleRowPath),
                 Flywheel.INSTANCE.constantShot(SECOND_SPEED),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 Flywheel.INSTANCE.shutdown(),
 
                 new FollowPath(outtaTheWay)

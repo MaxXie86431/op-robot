@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
-import android.graphics.Color;
-
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

@@ -25,7 +25,6 @@ import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
-import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
@@ -79,14 +78,14 @@ public class FarBlue2RowAuto extends NextFTCOpMode {
                         //new FollowPath(initialLaunchPath),
                         Flywheel.INSTANCE.out(FAR_SPEED)
                 ),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(initialToBottomStart),
                 new FollowPath(bottomRowPath),
                 Flywheel.INSTANCE.out(FIRST_SPEED),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(middleRowPath),
                 Flywheel.INSTANCE.constantShot(SECOND_SPEED),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 Flywheel.INSTANCE.shutdown(),
                 new FollowPath(outtaTheWay)
         );

@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import static dev.nextftc.extensions.pedro.PedroComponent.follower;
-
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.PathChain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +8,6 @@ import java.util.List;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.utility.NullCommand;
-import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -29,7 +23,8 @@ public class Flicker implements Subsystem {
     private final ServoEx servo3= new ServoEx("Flicker3");
     public static double pos = 0.5;
     public static double flickDelay = 0.3;
-    public static double betweenflicksDelay = 0.05;
+    public static double betweenflicksDelay = 0.09;
+    public static double betweenflicksDelayAuto = 0.09;
     private static String flicked = "";
     /*
     public static double up1 = 0.4;
@@ -141,9 +136,6 @@ public class Flicker implements Subsystem {
         );
     }
 
-
-
-
     public Command chooseFlick(int pos) {
         if (pos == 1) {
             return flick1();
@@ -159,15 +151,6 @@ public class Flicker implements Subsystem {
         }
     }
 
-    public Command flickTwo(double velocity) {
-        if (velocity == 0) {
-            return new NullCommand();
-        }
-        return new SequentialGroup( //actually creates command of flicks based on what was added earlier
-                chooseFlick(1),
-                chooseFlick(3)
-        );
-    }
     public Command flickAll() {
         String motif = Limelight.INSTANCE.color();
         String inventory = ColorDetector.INSTANCE.getSensorValues();
@@ -220,6 +203,17 @@ public class Flicker implements Subsystem {
                 new Delay(betweenflicksDelay),
                 flick1(),
                 new Delay(betweenflicksDelay)
+        );
+    }
+
+    public Command flickThreeBallsAuto() {
+        return new SequentialGroup(
+                flick3(),
+                new Delay(betweenflicksDelayAuto),
+                flick2(),
+                new Delay(betweenflicksDelayAuto),
+                flick1(),
+                new Delay(betweenflicksDelayAuto)
         );
     }
 
