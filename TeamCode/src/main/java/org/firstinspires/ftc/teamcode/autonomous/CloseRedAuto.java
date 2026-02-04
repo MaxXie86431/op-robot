@@ -46,7 +46,7 @@ public class CloseRedAuto extends NextFTCOpMode {
 
     public static double wait = 2;
     private PathChain initialLaunchPath, initialOut, outtaTheWayPath, topRowPath, middleRowPath, bottomRowPath, parkPath;
-    public static int CLOSE_SPEED = 1200;
+    public static int CLOSE_SPEED = 1150;
     static PoseHistory poseHistory;
     private Telemetry debugTelemetry;
 
@@ -68,13 +68,13 @@ public class CloseRedAuto extends NextFTCOpMode {
                         new FollowPath(initialLaunchPath),
                         Flywheel.INSTANCE.out(CLOSE_SPEED)
                 ),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(topRowPath),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(middleRowPath),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(bottomRowPath),
-                Flicker.INSTANCE.flickTwo(1),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
 
                 Flywheel.INSTANCE.shutdown(),
                 new FollowPath(outtaTheWayPath)
@@ -155,7 +155,7 @@ public class CloseRedAuto extends NextFTCOpMode {
         Flywheel.powerState = false;
         Turret.powerState =false;
         debugTelemetry = telemetry;
-        Flicker.INSTANCE.flickThreeBalls().schedule();
+        Flicker.INSTANCE.flickThreeBallsAuto().schedule();
         Turret.INSTANCE.zero();
         PoseStorage.setPose(startPose);
         follower().setStartingPose(startPose);

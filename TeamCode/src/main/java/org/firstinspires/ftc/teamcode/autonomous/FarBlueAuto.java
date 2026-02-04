@@ -78,17 +78,17 @@ public class FarBlueAuto extends NextFTCOpMode {
                         //new FollowPath(initialLaunchPath),
                         Flywheel.INSTANCE.out(FAR_SPEED)
                 ),
-                Flicker.INSTANCE.flickThreeBalls(),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(initialToBottomStart),
                 new FollowPath(bottomRowPath),
                 Flywheel.INSTANCE.out(FIRST_SPEED),
-                Flicker.INSTANCE.flickThreeBalls(),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(middleRowPath),
                 Flywheel.INSTANCE.constantShot(SECOND_SPEED),
-                Flicker.INSTANCE.flickThreeBalls(),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(topRowPath),
                 Flywheel.INSTANCE.out(THIRD_SPEED),
-                Flicker.INSTANCE.flickThreeBalls(),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 Flywheel.INSTANCE.shutdown(),
                 new FollowPath(outtaTheWay)
         );

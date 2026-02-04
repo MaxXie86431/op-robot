@@ -80,7 +80,7 @@ public class FarBlue0RowAuto extends NextFTCOpMode {
                         Flywheel.INSTANCE.out(FAR_SPEED)
                 ),
                 new Delay(2),
-                Flicker.INSTANCE.flickThreeBalls(),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new Delay(2),
                 new FollowPath(initialToBottomStart),
 
