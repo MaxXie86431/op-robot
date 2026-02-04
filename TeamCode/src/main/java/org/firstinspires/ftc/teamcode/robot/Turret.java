@@ -65,15 +65,15 @@ public class Turret implements Subsystem {
 
     public Command turnLeft(){
         return new SequentialGroup(
-            new InstantCommand(() -> powerState = false),
-            new SetPower(turretMotor, -1 * velocity)
+                new InstantCommand(() -> powerState = false),
+                new SetPower(turretMotor, -1 * velocity)
         );
     }
 
     public Command stop(){
         return new SequentialGroup(
-            new InstantCommand(() -> powerState = false),
-            new SetPower(turretMotor, 0)
+                new InstantCommand(() -> powerState = false),
+                new SetPower(turretMotor, 0)
         ).requires(this);
     }
 
@@ -90,8 +90,8 @@ public class Turret implements Subsystem {
 
     public Command turnByDegrees(double degrees){
         return new SequentialGroup(
-            new InstantCommand(() -> powerState = true),
-            new RunToPosition(controller, turretMotor.getCurrentPosition()  + degrees * positionPerDegree)
+                new InstantCommand(() -> powerState = true),
+                new RunToPosition(controller, turretMotor.getCurrentPosition()  + degrees * positionPerDegree)
         );
     }
 

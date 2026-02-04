@@ -39,13 +39,13 @@ public class Intake implements Subsystem {
         return new SequentialGroup(
                 Flicker.INSTANCE.intakeHelper(),
                new Delay(intakeDelay),
-               new SetPower(intakeMotor, -1)
+               new SetPower(intakeMotor, 1)
         );
 
     }
 
     public Command out(){
-        return new SetPower(intakeMotor, 1).requires(this);
+        return new SetPower(intakeMotor, -0.7).requires(this);
     }
 
     public Command stop(){
