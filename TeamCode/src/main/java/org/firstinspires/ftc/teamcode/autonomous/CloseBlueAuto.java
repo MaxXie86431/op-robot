@@ -153,8 +153,9 @@ public class CloseBlueAuto extends NextFTCOpMode {
     public void onInit() {
         Flywheel.powerState = false;
         Turret.powerState =false;
-        debugTelemetry = telemetry;
         Turret.INSTANCE.zero();
+        Flicker.INSTANCE.setFlickDelay(Flicker.flickDelayAuto);
+        debugTelemetry = telemetry;
         Flicker.INSTANCE.flickThreeBallsAuto().schedule();
         //Turret.INSTANCE.setEncoderValue(0);
         // Initialize the follower with your constants

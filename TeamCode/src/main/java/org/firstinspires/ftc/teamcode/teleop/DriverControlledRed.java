@@ -68,6 +68,7 @@ public class DriverControlledRed extends NextFTCOpMode {
         Flywheel.powerState = false;
         Turret.powerState = false;
         Turret.locked = false;
+        Flicker.INSTANCE.setFlickDelay(Flicker.flickDelayTeleOp);
         //PoseStorage.resetPose();
         follower().setStartingPose(PoseStorage.getPose());
         follower().update();

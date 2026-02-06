@@ -79,6 +79,7 @@ public class DriverControlledBlue extends NextFTCOpMode {
         Turret.powerState = false;
         Turret.locked = false;
         Turret.INSTANCE.setEncoderValue(0);
+        Flicker.INSTANCE.setFlickDelay(Flicker.flickDelayTeleOp);
         //PoseStorage.resetPose();
         follower().setStartingPose(PoseStorage.getPose());
         follower().update();

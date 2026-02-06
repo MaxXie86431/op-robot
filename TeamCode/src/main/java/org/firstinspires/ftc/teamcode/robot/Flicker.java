@@ -22,7 +22,9 @@ public class Flicker implements Subsystem {
     private final ServoEx servo2= new ServoEx("Flicker2");
     private final ServoEx servo3= new ServoEx("Flicker3");
     public static double pos = 0.5;
-    public static double flickDelay = 0.3;
+    public static double flickDelay = 0;
+    public static double flickDelayTeleOp = 0.25;
+    public static double flickDelayAuto = 0.3;
     public static double betweenflicksDelay = 0.09;
     public static double betweenflicksDelayAuto = 0.09;
     private static String flicked = "";
@@ -215,6 +217,10 @@ public class Flicker implements Subsystem {
                 flick1(),
                 new Delay(betweenflicksDelayAuto)
         );
+    }
+
+    public void setFlickDelay(double delay) {
+        flickDelay = delay;
     }
 
 }

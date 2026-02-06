@@ -42,7 +42,7 @@ public class FarRedHumanAuto extends NextFTCOpMode {
     private PathChain outtaTheWay;
     static PoseHistory poseHistory;
     private Telemetry debugTelemetry;
-    public static double initialAngle = 0;
+    public static double initialAngle = -71;
 
 
 
@@ -121,7 +121,7 @@ public class FarRedHumanAuto extends NextFTCOpMode {
         Turret.powerState = false;
         Turret.INSTANCE.setEncoderValue(0);
         Turret.INSTANCE.turnByDegrees(initialAngle).schedule();
-        Intake.INSTANCE.stop();
+        Flicker.INSTANCE.setFlickDelay(Flicker.flickDelayAuto);
         debugTelemetry = telemetry;
         // Initialize the follower with your constants
         Flicker.INSTANCE.allDown().schedule();

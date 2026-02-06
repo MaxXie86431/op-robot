@@ -114,6 +114,7 @@ public class FarBlueHumanAuto extends NextFTCOpMode {
         Turret.INSTANCE.setEncoderValue(0);
         Turret.INSTANCE.turnByDegrees(initialAngle).schedule();
         Intake.INSTANCE.stop();
+        Flicker.INSTANCE.setFlickDelay(Flicker.flickDelayAuto);
         //PoseStorage.resetPose();
 
         PoseStorage.setPose(startPose);

@@ -154,6 +154,7 @@ public class CloseRedAuto extends NextFTCOpMode {
     public void onInit() {
         Flywheel.powerState = false;
         Turret.powerState =false;
+        Flicker.INSTANCE.setFlickDelay(Flicker.flickDelayAuto);
         debugTelemetry = telemetry;
         Flicker.INSTANCE.flickThreeBallsAuto().schedule();
         Turret.INSTANCE.zero();
