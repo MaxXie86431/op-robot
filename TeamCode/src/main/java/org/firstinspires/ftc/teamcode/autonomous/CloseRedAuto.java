@@ -40,7 +40,7 @@ public class CloseRedAuto extends NextFTCOpMode {
     private static final Pose parkPose = new Pose(38.5,34,225);
     private static final Pose topRowEndPose = new Pose(115, 84.35, Math.toRadians(0));
     private static final Pose middleRowStartPose = new Pose(84, 60, Math.toRadians(0));
-    private static final Pose middleRowEndPose = new Pose(120, 60, Math.toRadians(0));
+    private static final Pose middleRowEndPose = new Pose(130, 63, Math.toRadians(0));
     private static final Pose bottomRowStartPose = new Pose(84, 36, Math.toRadians(0));
     private static final Pose bottomRowEndPose = new Pose(120, 36, Math.toRadians(0));
 
@@ -69,9 +69,9 @@ public class CloseRedAuto extends NextFTCOpMode {
                         Flywheel.INSTANCE.out(CLOSE_SPEED)
                 ),
                 Flicker.INSTANCE.flickThreeBallsAuto(),
-                new FollowPath(topRowPath),
-                Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(middleRowPath),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
+                new FollowPath(topRowPath),
                 Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(bottomRowPath),
                 Flicker.INSTANCE.flickThreeBallsAuto(),
