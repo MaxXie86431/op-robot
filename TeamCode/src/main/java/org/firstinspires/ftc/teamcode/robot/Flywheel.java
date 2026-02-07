@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.utils.GenetonUtils;
+
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelDeadlineGroup;
 import dev.nextftc.core.commands.groups.ParallelGroup;
@@ -126,25 +128,16 @@ public class Flywheel implements Subsystem{
     }
 
     public Command shootOut() {
-        /*
-        double[] values = Limelight.INSTANCE.calculateLaunchPower();
-        distanceToGoal = values[0];
-        launchVelocity = values[1];
-
-         */
+        distanceToGoal = GenetonUtils.INSTANCE.getTargetLength();
+        launchVelocity = GenetonUtils.INSTANCE.getTargetVelocity();
         return new SequentialGroup(
-                Turret.INSTANCE.autoTrackButton(),
-                Turret.INSTANCE.turnByDegrees(-3),
-                new InstantCommand(() -> {
-                    double[] values = Limelight.INSTANCE.calculateLaunchPower();
-                    distanceToGoal = values[0];
-                    launchVelocity = values[1];
-                }),
-                out(launchVelocity),
+                //Turret.INSTANCE.autoTrackButton(),
+                Turret.INSTANCE.autoAlign(),
                 new ParallelDeadlineGroup(
                         new Delay(0.00265*launchVelocity-1.2),
                         out(launchVelocity)
                 ),
+                Flicker.INSTANCE.flickThreeBalls(),
                 Flicker.INSTANCE.flickThreeBalls()
         );
     }

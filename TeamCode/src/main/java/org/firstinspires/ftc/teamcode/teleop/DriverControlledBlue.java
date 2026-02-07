@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.Limelight;
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.robot.Turret;
+import org.firstinspires.ftc.teamcode.utils.GenetonUtils;
+
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 import dev.nextftc.core.commands.groups.ParallelGroup;
@@ -56,20 +58,24 @@ public class DriverControlledBlue extends NextFTCOpMode {
 
     private void telemetryUpdate(){
         telemetry.addData("Heading Angle: ", PoseStorage.getHeadingDegrees());
-        telemetry.addData("Goal Angle: ", Turret.INSTANCE.getFieldTargetAngle());
-        telemetry.addData("Target Turret Angle: ", Turret.INSTANCE.getTargetTurretAngle());
+        telemetry.addData("Goal Angle: ", GenetonUtils.INSTANCE.getFieldTargetAngle());
+        telemetry.addData("Target Turret Angle: ", GenetonUtils.INSTANCE.getTargetTurretAngle());
         telemetry.addData("Current Turret Angle: ", Turret.INSTANCE.getDegrees());
+
+        telemetry.addData("current RPM", Flywheel.INSTANCE.getVelocityRPM());
+        telemetry.addData("target RPM: ", Flywheel.launchVelocity);
+        telemetry.addData("target distance: ", Flywheel.distanceToGoal);
 
         telemetry.addData("Current Pose: ", PoseStorage.getPose());
 
         telemetry.addData("Current Angle: ", ((PoseStorage.getHeadingDegrees())));
         telemetry.addData("Turret pos: ", Turret.INSTANCE.getDegrees());
         telemetry.addData("Turret encoders: ", Turret.INSTANCE.getEncoderValue());
-        telemetry.addData("goal angle: ", Turret.INSTANCE.getFieldTargetAngle());
-        telemetry.addData("angle need to turn: ", Turret.INSTANCE.getTargetTurretAngle());
+        telemetry.addData("goal angle: ", GenetonUtils.INSTANCE.getFieldTargetAngle());
+        telemetry.addData("angle need to turn: ", GenetonUtils.INSTANCE.getTargetTurretAngle());
         telemetry.addData("locked", Turret.locked);
         telemetry.addData("Sensor Values: ", ColorDetector.INSTANCE.getSensorValues());
-        telemetry.addData("current rpm", Flywheel.INSTANCE.getVelocityRPM());
+
         telemetry.update();
     }
 
@@ -78,7 +84,6 @@ public class DriverControlledBlue extends NextFTCOpMode {
         Flywheel.powerState = false;
         Turret.powerState = false;
         Turret.locked = false;
-        Turret.INSTANCE.setEncoderValue(0);
         Flicker.INSTANCE.setFlickDelay(Flicker.flickDelayTeleOp);
         //PoseStorage.resetPose();
         follower().setStartingPose(PoseStorage.getPose());
@@ -110,6 +115,7 @@ public class DriverControlledBlue extends NextFTCOpMode {
                 })
                 .whenBecomesFalse(() -> {
                     Flywheel.INSTANCE.shutdown().schedule();
+                    Flicker.INSTANCE.allDown().schedule();
                 });
 
         Gamepads.gamepad1().rightBumper()

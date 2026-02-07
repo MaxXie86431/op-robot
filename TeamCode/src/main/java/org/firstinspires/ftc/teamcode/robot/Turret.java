@@ -4,6 +4,7 @@ import com.bylazar.configurables.annotations.Configurable;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Team;
+import org.firstinspires.ftc.teamcode.utils.GenetonUtils;
 
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.core.commands.Command;
@@ -28,8 +29,7 @@ public class Turret implements Subsystem {
     public static double TICKS_PER_DEGREE = 9.51;
     public static int RIGHT_BOUND_TICKS = 1800;
     public static int LEFT_BOUND_TICKS = -950;
-
-    private static final double TARGET_X_BLUE = 12.0, TARGET_X_RED =126.0, TARGET_Y = 132;
+    public static double PADDING = 0;
 
     public static boolean locked = false;
     public static boolean powerState = false;
@@ -89,28 +89,8 @@ public class Turret implements Subsystem {
         );
     }
 
-
-    public double getTargetTurretAngle() {
-        double robotHeading = PoseStorage.getHeadingDegrees();
-        double fieldAngleToTarget = getFieldTargetAngle();
-        return normalizeAngle(robotHeading - fieldAngleToTarget);
-    }
-
-    public double getFieldTargetAngle(){
-        double targetX = (Team.getTeam() == 0) ? TARGET_X_BLUE : TARGET_X_RED;
-        double deltaX = targetX - PoseStorage.getX();
-        double deltaY = TARGET_Y - PoseStorage.getY();
-        return Math.toDegrees(Math.atan2(deltaY, deltaX));
-    }
-
     public Command autoAlign() {
-        return turnToDegrees(getTargetTurretAngle());
-    }
-
-    private double normalizeAngle(double angle) {
-        while (angle > 180)  angle -= 360;
-        while (angle <= -180) angle += 360;
-        return angle;
+        return turnToDegrees(GenetonUtils.INSTANCE.getTargetTurretAngle()+PADDING);
     }
 
     public Command autoAlignPerpetual = new LambdaCommand()
@@ -134,7 +114,7 @@ public class Turret implements Subsystem {
     public Command autoTrackButton() {
         double angle = Limelight.INSTANCE.calculateAlignmentAngle();
         if (angle != 0) {
-            return turnByDegrees(angle);
+            return turnByDegrees(angle+PADDING);
         }
         return new NullCommand();
     }

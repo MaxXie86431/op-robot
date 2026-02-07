@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.Limelight;
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.robot.Turret;
+import org.firstinspires.ftc.teamcode.utils.GenetonUtils;
+
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 import dev.nextftc.core.commands.groups.ParallelGroup;
@@ -53,8 +55,8 @@ public class DriverControlledRed extends NextFTCOpMode {
         telemetry.addData("Current Angle: ", ((PoseStorage.getPose().getHeading())*180.0/Math.PI));
         telemetry.addData("Turret pos: ", Turret.INSTANCE.getDegrees());
         telemetry.addData("Turret encoders: ", Turret.INSTANCE.getEncoderValue());
-        telemetry.addData("goal angle: ", Turret.INSTANCE.getFieldTargetAngle());
-        telemetry.addData("angle need to turn: ", Turret.INSTANCE.getTargetTurretAngle());
+        telemetry.addData("goal angle: ", GenetonUtils.INSTANCE.getFieldTargetAngle());
+        telemetry.addData("angle need to turn: ", GenetonUtils.INSTANCE.getTargetTurretAngle());
         telemetry.addData("locked", Turret.locked);
         telemetry.addData("Sensor Values: ", ColorDetector.INSTANCE.getSensorValues());
         telemetry.addData("current rpm", Flywheel.INSTANCE.getVelocityRPM());
@@ -73,7 +75,7 @@ public class DriverControlledRed extends NextFTCOpMode {
         follower().setStartingPose(PoseStorage.getPose());
         follower().update();
         Team.setTeam(1);
-        telemetry.addData("angle need to turn: ", Turret.INSTANCE.getTargetTurretAngle());
+        telemetry.addData("angle need to turn: ", GenetonUtils.INSTANCE.getTargetTurretAngle());
         telemetry.update();
         //Turret.INSTANCE.zero();
 
@@ -101,6 +103,7 @@ public class DriverControlledRed extends NextFTCOpMode {
                 })
                 .whenBecomesFalse(() -> {
                     Flywheel.INSTANCE.shutdown().schedule();
+                    Flicker.INSTANCE.allDown().schedule();
                 });
 
         Gamepads.gamepad1().rightBumper()

@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.robot.LED;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.robot.Limelight;
 import org.firstinspires.ftc.teamcode.robot.Turret;
+import org.firstinspires.ftc.teamcode.utils.GenetonUtils;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
@@ -79,8 +80,8 @@ public class DriverControlled extends NextFTCOpMode {
         telemetry.addData("current RPM", Flywheel.INSTANCE.getVelocityRPM());
         telemetry.addData("encoder value", Turret.INSTANCE.getEncoderValue());
         telemetry.addData("team:", Team.getTeam());
-        telemetry.addData("goal angle:", Turret.INSTANCE.getFieldTargetAngle());
-        telemetry.addData("actual angle needed to turn: ", Turret.INSTANCE.getTargetTurretAngle());
+        telemetry.addData("goal angle:", GenetonUtils.INSTANCE.getFieldTargetAngle());
+        telemetry.addData("actual angle needed to turn: ", GenetonUtils.INSTANCE.getTargetTurretAngle());
         telemetry.update();
         super.onUpdate();
     }

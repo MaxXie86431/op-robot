@@ -2,10 +2,14 @@ package org.firstinspires.ftc.teamcode.utils;
 
 import static org.firstinspires.ftc.teamcode.robot.Flywheel.launchPower;
 
+import static dev.nextftc.extensions.pedro.PedroComponent.follower;
+
 import com.bylazar.configurables.PanelsConfigurables;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
+import org.firstinspires.ftc.teamcode.pedroPathing.Team;
 import org.firstinspires.ftc.teamcode.robot.ColorDetector;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
@@ -71,6 +75,9 @@ public class RegressionModel extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
+        follower().update();
+        PoseStorage.setPose(follower().getPose());
+        telemetry.addData("Current Pose: ", PoseStorage.getPose());
         telemetry.addData("Launch Power", launchPower);
         telemetry.addData("Target rpm", Flywheel.INSTANCE.getPower()*2000);
         telemetry.addData("Velocity RPM", Flywheel.INSTANCE.getVelocityRPM());
@@ -86,6 +93,9 @@ public class RegressionModel extends NextFTCOpMode {
 
     @Override
     public void onInit() {
+        Team.setTeam(0);
+        follower().setStartingPose(PoseStorage.getPose());
+        follower().update();
         PanelsConfigurables.INSTANCE.refreshClass(this);
 
     }
@@ -138,7 +148,8 @@ public class RegressionModel extends NextFTCOpMode {
 
         Gamepads.gamepad1().a()
                 .whenBecomesTrue(() -> {
-                    distanceToGoal = Limelight.INSTANCE.calculateLaunchPower()[0];
+                    distanceToGoal = GenetonUtils.INSTANCE.getTargetLength();
+                    //distanceToGoal = Limelight.INSTANCE.calculateLaunchPower()[0]; //Limelight
                 });
 
 
