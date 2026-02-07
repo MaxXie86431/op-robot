@@ -40,12 +40,13 @@ public class CloseRedAuto extends NextFTCOpMode {
     private static final Pose parkPose = new Pose(38.5,34,225);
     private static final Pose topRowEndPose = new Pose(115, 84.35, Math.toRadians(0));
     private static final Pose middleRowStartPose = new Pose(84, 60, Math.toRadians(0));
-    private static final Pose middleRowEndPose = new Pose(130, 63, Math.toRadians(0));
+    private static final Pose middleRowEndPose = new Pose(120, 60, Math.toRadians(0));
+    private static final Pose leverPose = new Pose(130, 70, Math.toRadians(90));
     private static final Pose bottomRowStartPose = new Pose(84, 36, Math.toRadians(0));
     private static final Pose bottomRowEndPose = new Pose(120, 36, Math.toRadians(0));
 
     public static double wait = 2;
-    private PathChain initialLaunchPath, initialOut, outtaTheWayPath, topRowPath, middleRowPath, bottomRowPath, parkPath;
+    private PathChain initialLaunchPath, initialOut, outtaTheWayPath, topRowPath, middleRowPath, bottomRowPath, parkPath, hitLeverPath;
     public static int CLOSE_SPEED = 1150;
     static PoseHistory poseHistory;
     private Telemetry debugTelemetry;
@@ -70,6 +71,7 @@ public class CloseRedAuto extends NextFTCOpMode {
                 ),
                 Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(middleRowPath),
+                new FollowPath(hitLeverPath),
                 Flicker.INSTANCE.flickThreeBallsAuto(),
                 new FollowPath(topRowPath),
                 Flicker.INSTANCE.flickThreeBallsAuto(),
@@ -144,6 +146,12 @@ public class CloseRedAuto extends NextFTCOpMode {
                     Intake.INSTANCE.stop().schedule();
                 })
                 .setLinearHeadingInterpolation(bottomRowEndPose.getHeading(), launchPose.getHeading())
+                .build();
+        hitLeverPath = follower().pathBuilder()
+                .addPath(new BezierLine(middleRowEndPose, leverPose))
+                .setConstantHeadingInterpolation(leverPose.getHeading())
+                .addPath(new BezierLine(leverPose, launchPose))
+                .setLinearHeadingInterpolation(leverPose.getHeading(), launchPose.getHeading())
                 .build();
         parkPath = follower().pathBuilder()
                 .addPath(new BezierLine(launchPose,parkPose))
