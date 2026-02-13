@@ -24,7 +24,7 @@ public class Flicker implements Subsystem {
     public static double pos = 0.5;
     public static double flickDelay = 0;
     public static double flickDelayTeleOp = 0.25;
-    public static double flickDelayAuto = 0.3;
+    public static double flickDelayAuto = 0.4;
     public static double betweenflicksDelay = 0.09;
     public static double betweenflicksDelayAuto = 0.09;
     private static String flicked = "";
@@ -45,7 +45,7 @@ public class Flicker implements Subsystem {
     public static double down2 = 0.94;
     public static double up3 = 0.8;
     public static double down3 = 0;
-    public static double bumper = 0.16;
+    public static double bumper = 0.17;
 
     public Command flick1() {
         return new SequentialGroup(

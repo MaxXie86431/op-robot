@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import com.bylazar.configurables.annotations.Configurable;
+
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Team;
-
+@Configurable
 public class GenetonUtils {
 
     private static final double TARGET_X_BLUE = 12.0, TARGET_X_RED =126.0, TARGET_Y = 132;
 
-    public static final double SLOPE = 5.19679, CONSTANT = 773.09206,  PADDING=0;
+    public static double SLOPE = 5.19679, CONSTANT = 773.09206,  PADDING=20;
 
     public static final GenetonUtils INSTANCE = new GenetonUtils();
 

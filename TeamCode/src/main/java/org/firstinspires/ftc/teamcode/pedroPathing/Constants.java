@@ -17,7 +17,7 @@ import com.bylazar.configurables.annotations.Configurable;
 
 @Configurable
 public class Constants {
-    public static double start = 0.2;
+    public static double start = 0.1;
     public static double complete = 0.9;
 
     public static FollowerConstants followerConstants = new FollowerConstants()

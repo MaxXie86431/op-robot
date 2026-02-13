@@ -1,9 +1,9 @@
 # Expansion Hub
 ## Motors:
-- 0 = Flywheel
+- 3 = Flywheel
 - 1 = IntakeMotor
 - 2 = Bottom-Left-Motor
-- 3 = Top-Left-Motor
+- 0 = Top-Left-Motor
 
 ## Servos:
 - 0 = Flicker2
@@ -20,6 +20,6 @@
 - 0 = Flicker2 (Control)
 - 5 = Flicker3 (Expansion)
  ## Color Sensors:
-- i2c bus 2 = ColorSensor1 (Control hub)
-- i2c bus 0 = Color Sensor 2 (Control hub) (v3 one)
-- i2c bus 1 = Color Sensor 3 (Control hub)
+- i2c bus 2 = ColorSensor3 (Control hub)
+- i2c bus 0 = Color Sensor2 (Control hub) (v3 one)
+- i2c bus 1 = Color Sensor1 (Control hub)

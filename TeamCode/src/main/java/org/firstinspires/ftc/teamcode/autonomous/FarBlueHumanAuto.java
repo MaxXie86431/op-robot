@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
-import org.firstinspires.ftc.teamcode.pedroPathing.Team;
 import org.firstinspires.ftc.teamcode.robot.Flicker;
 import org.firstinspires.ftc.teamcode.robot.Flywheel;
 import org.firstinspires.ftc.teamcode.robot.Intake;
@@ -33,20 +32,17 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 @Configurable
 @Autonomous(name = "Far Human Blue Auto")
 public class FarBlueHumanAuto extends NextFTCOpMode {
-
-    public static Pose startPose = new Pose(59, 13, Math.toRadians(180));
-    private static final Pose humanPlayerPose = new Pose(14, 14, Math.toRadians(180));
-    //private static final Pose firstTwoPose = new Pose(13, 16, Math.toRadians(180));
-    //private static final Pose lastOnePose = new Pose(13, 12, Math.toRadians(180));
-    private static final Pose moveBackPose = new Pose(40, 14, Math.toRadians(180));
-    public static int FAR_SPEED = 1460;
-    public static double initialDelay = 2;
+    private static final Pose startPose = new Pose(54, 10, Math.toRadians(112));
+    private static final Pose humanPlayerPose = new Pose(10, 10, Math.toRadians(90));
+    private static final Pose moveBackPose = new Pose(40, 10,Math.toRadians(90));
+    public static int FAR_SPEED = 1500;
+    public static double initialDelay = 10;
     public static double delayBetweenCycles = 2;
     private PathChain initialToHumanPlayer;
     private PathChain outtaTheWay;
     static PoseHistory poseHistory;
     private Telemetry debugTelemetry;
-    public static double initialAngle = 71;
+    public static double initialAngle = -71;
 
 
 
@@ -62,18 +58,31 @@ public class FarBlueHumanAuto extends NextFTCOpMode {
 
     private Command autonomousRoutine(){
         return new SequentialGroup(
-                Turret.INSTANCE.autoTrackButton(),
-                Flywheel.INSTANCE.rampedOut(FAR_SPEED),
-                new Delay(initialDelay),
-                Flicker.INSTANCE.flickThreeBalls(),
-                new Delay(initialDelay),
-                Flicker.INSTANCE.flickThreeBalls(),
+                new ParallelGroup(
+                        //new FollowPath(initialLaunchPath),
+                        Flywheel.INSTANCE.out(FAR_SPEED)
+                ),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
+                Intake.INSTANCE.in(),
                 new FollowPath(initialToHumanPlayer),
-                Flicker.INSTANCE.flickThreeBalls(),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
+                new Delay(delayBetweenCycles),
                 new FollowPath(initialToHumanPlayer),
-                Flicker.INSTANCE.flickThreeBalls(),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
+                new Delay(delayBetweenCycles),
                 new FollowPath(initialToHumanPlayer),
-                Flicker.INSTANCE.flickThreeBalls(),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
+                new Delay(delayBetweenCycles),
+                new FollowPath(initialToHumanPlayer),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
+                new Delay(delayBetweenCycles),
+                new FollowPath(initialToHumanPlayer),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
+                new Delay(delayBetweenCycles),
+                new FollowPath(initialToHumanPlayer),
+                Flicker.INSTANCE.flickThreeBallsAuto(),
+                new Delay(delayBetweenCycles),
+
                 Flywheel.INSTANCE.shutdown(),
                 new FollowPath(outtaTheWay)
         );
@@ -82,11 +91,6 @@ public class FarBlueHumanAuto extends NextFTCOpMode {
     public void buildPaths() {
         initialToHumanPlayer = follower().pathBuilder()
                 .addPath(new BezierLine(startPose, humanPlayerPose))
-                .addParametricCallback(0, () -> {
-                    debugTelemetry.addData("CALLBACK", "humanPlayerPath intake triggered");
-                    debugTelemetry.update();
-                    Intake.INSTANCE.in().schedule();
-                })
                 .addPath(new BezierLine(humanPlayerPose, moveBackPose))
                 .setConstantHeadingInterpolation(humanPlayerPose.getHeading())
                 .addPath(new BezierLine(moveBackPose, humanPlayerPose))
@@ -95,33 +99,23 @@ public class FarBlueHumanAuto extends NextFTCOpMode {
                 .build();
         outtaTheWay = follower().pathBuilder()
                 .addPath(new BezierLine(startPose, humanPlayerPose))
-                .addParametricCallback(0.2, () -> {
-                    debugTelemetry.addData("CALLBACK", "humanPlayerPath stop triggered");
-                    debugTelemetry.update();
-                    Intake.INSTANCE.stop().schedule();
-                })
                 .setLinearHeadingInterpolation(startPose.getHeading(), humanPlayerPose.getHeading())
                 .build();
     }
 
     @Override
     public void onInit() {
-
         Flywheel.powerState = false;
-        debugTelemetry = telemetry;
         Turret.powerState = false;
-        Turret.locked = false;
-        Turret.INSTANCE.setEncoderValue(0);
-        Turret.INSTANCE.turnByDegrees(initialAngle).schedule();
-        Intake.INSTANCE.stop();
+        Turret.INSTANCE.zero();
         Flicker.INSTANCE.setFlickDelay(Flicker.flickDelayAuto);
-        //PoseStorage.resetPose();
-
+        debugTelemetry = telemetry;
+        // Initialize the follower with your constants
+        Flicker.INSTANCE.flickThreeBalls().schedule();
         PoseStorage.setPose(startPose);
         follower().setStartingPose(startPose);
         follower().update();
         buildPaths();
-        Team.setTeam(0);
     }
 
 
@@ -135,8 +129,6 @@ public class FarBlueHumanAuto extends NextFTCOpMode {
         follower().update();
         PoseStorage.setPose(follower().getPose());
         telemetry.addData("flywheel rpm: ", Flywheel.INSTANCE.getVelocityRPM());
-        telemetry.addData("velocity required: ", FAR_SPEED);
-        telemetry.addData("Limelight angle", Limelight.INSTANCE.calculateAlignmentAngle());
         telemetry.update();
     }
 

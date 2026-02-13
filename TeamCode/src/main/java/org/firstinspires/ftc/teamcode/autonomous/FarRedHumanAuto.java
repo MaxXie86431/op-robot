@@ -32,10 +32,10 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 @Configurable
 @Autonomous(name = "Far Human Red Auto")
 public class FarRedHumanAuto extends NextFTCOpMode {
-    private static final Pose startPose = new Pose(85, 13, Math.toRadians(0));
-    private static final Pose humanPlayerPose = new Pose(130, 14, Math.toRadians(0));
-    private static final Pose moveBackPose = new Pose(104, 14,Math.toRadians(0));
-    public static int FAR_SPEED = 1520;
+    private static final Pose startPose = new Pose(90, 10, Math.toRadians(68));
+    private static final Pose humanPlayerPose = new Pose(134, 10, Math.toRadians(0));
+    private static final Pose moveBackPose = new Pose(104, 10,Math.toRadians(0));
+    public static int FAR_SPEED = 1500;
     public static double initialDelay = 10;
     public static double delayBetweenCycles = 2;
     private PathChain initialToHumanPlayer;
@@ -63,8 +63,7 @@ public class FarRedHumanAuto extends NextFTCOpMode {
                         Flywheel.INSTANCE.out(FAR_SPEED)
                 ),
                 Flicker.INSTANCE.flickThreeBallsAuto(),
-
-                new Delay(initialDelay),
+                Intake.INSTANCE.in(),
                 new FollowPath(initialToHumanPlayer),
                 Flicker.INSTANCE.flickThreeBallsAuto(),
                 new Delay(delayBetweenCycles),
@@ -92,40 +91,27 @@ public class FarRedHumanAuto extends NextFTCOpMode {
     public void buildPaths() {
         initialToHumanPlayer = follower().pathBuilder()
                 .addPath(new BezierLine(startPose, humanPlayerPose))
-                .addParametricCallback(0, () -> {
-                    debugTelemetry.addData("CALLBACK", "humanPlayerPath intake triggered");
-                    debugTelemetry.update();
-                    Intake.INSTANCE.in().schedule();
-                })
                 .addPath(new BezierLine(humanPlayerPose, moveBackPose))
                 .setConstantHeadingInterpolation(humanPlayerPose.getHeading())
                 .addPath(new BezierLine(moveBackPose, humanPlayerPose))
                 .addPath(new BezierLine(humanPlayerPose, startPose))
-                .setLinearHeadingInterpolation(humanPlayerPose.getHeading(), startPose.getHeading())
+                .setConstantHeadingInterpolation(humanPlayerPose.getHeading())
                 .build();
         outtaTheWay = follower().pathBuilder()
                 .addPath(new BezierLine(startPose, humanPlayerPose))
                 .setLinearHeadingInterpolation(startPose.getHeading(), humanPlayerPose.getHeading())
-                .addParametricCallback(0.2, () -> {
-                    debugTelemetry.addData("CALLBACK", "humanPlayerPath stop triggered");
-                    debugTelemetry.update();
-                    Intake.INSTANCE.stop().schedule();
-                })
                 .build();
     }
 
     @Override
     public void onInit() {
         Flywheel.powerState = false;
-        Turret.locked = false;
         Turret.powerState = false;
-        Turret.INSTANCE.setEncoderValue(0);
-        Turret.INSTANCE.turnByDegrees(initialAngle).schedule();
+        Turret.INSTANCE.zero();
         Flicker.INSTANCE.setFlickDelay(Flicker.flickDelayAuto);
         debugTelemetry = telemetry;
         // Initialize the follower with your constants
-        Flicker.INSTANCE.allDown().schedule();
-        Turret.INSTANCE.zero();
+        Flicker.INSTANCE.flickThreeBalls().schedule();
         PoseStorage.setPose(startPose);
         follower().setStartingPose(startPose);
         follower().update();

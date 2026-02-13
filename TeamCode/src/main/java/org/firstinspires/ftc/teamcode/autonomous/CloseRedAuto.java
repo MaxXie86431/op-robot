@@ -9,6 +9,7 @@ import com.pedropathing.util.PoseHistory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -34,19 +35,19 @@ import org.firstinspires.ftc.teamcode.robot.Turret;
 @Autonomous(name = "Close 3 Row Red Auto")
 public class CloseRedAuto extends NextFTCOpMode {
     // Define poses
-    private static final Pose startPose = new Pose(119, 125, Math.toRadians(45));
-    private static final Pose launchPose = new Pose(84, 84.3, Math.toRadians(45));
-    private static final Pose outtatheWayPose = new Pose(94,65,Math.toRadians(300));
-    private static final Pose parkPose = new Pose(38.5,34,225);
-    private static final Pose topRowEndPose = new Pose(115, 84.35, Math.toRadians(0));
-    private static final Pose middleRowStartPose = new Pose(84, 60, Math.toRadians(0));
-    private static final Pose middleRowEndPose = new Pose(120, 60, Math.toRadians(0));
-    private static final Pose leverPose = new Pose(130, 70, Math.toRadians(90));
-    private static final Pose bottomRowStartPose = new Pose(84, 36, Math.toRadians(0));
-    private static final Pose bottomRowEndPose = new Pose(120, 36, Math.toRadians(0));
+    public static Pose startPose = new Pose(122.5, 122.5, Math.toRadians(40));
+    public static Pose launchPose = new Pose(90, 85, Math.toRadians(44));
+    public static Pose outtatheWayPose = new Pose(94,65,Math.toRadians(90));
+    public static Pose topRowEndPose = new Pose(121, 84, Math.toRadians(0));
+    public static Pose middleRowStartPose = new Pose(90, 58, Math.toRadians(0));
+    public static Pose middleRowEndPose = new Pose(127, 58, Math.toRadians(0));
+    public static Pose leverBack = new Pose(115,58,Math.toRadians(0));
+    public static Pose leverPose = new Pose(121, 65, Math.toRadians(90));
+    public static Pose bottomRowStartPose = new Pose(90, 37, Math.toRadians(0));
+    public static Pose bottomRowEndPose = new Pose(127, 37, Math.toRadians(0));
 
     public static double wait = 2;
-    private PathChain initialLaunchPath, initialOut, outtaTheWayPath, topRowPath, middleRowPath, bottomRowPath, parkPath, hitLeverPath;
+    private PathChain initialLaunchPath, outtaTheWayPath, topRowPath, middleRowPath, bottomRowPath, hitLeverPath;
     public static int CLOSE_SPEED = 1150;
     static PoseHistory poseHistory;
     private Telemetry debugTelemetry;
@@ -86,12 +87,9 @@ public class CloseRedAuto extends NextFTCOpMode {
     }
 
     public void buildPaths() {
-        initialOut = follower().pathBuilder()
-                .addPath(new BezierLine(startPose,outtatheWayPose))
-                .setTangentHeadingInterpolation()
-                .build();
         outtaTheWayPath = follower().pathBuilder()
                 .addPath(new BezierLine(launchPose,outtatheWayPose))
+                .setLinearHeadingInterpolation(launchPose.getHeading(), outtatheWayPose.getHeading())
                 .build();
         initialLaunchPath = follower().pathBuilder()
                 .addPath(new BezierLine(startPose, launchPose))
@@ -110,6 +108,7 @@ public class CloseRedAuto extends NextFTCOpMode {
                     debugTelemetry.addData("CALLBACK", "middleRowPath stop triggered");
                     debugTelemetry.update();
                     Intake.INSTANCE.stop().schedule();
+                    Flicker.INSTANCE.allDown();
                 })
                 .build();
         middleRowPath = follower().pathBuilder()
@@ -121,13 +120,6 @@ public class CloseRedAuto extends NextFTCOpMode {
                     Intake.INSTANCE.in().schedule();
                 })
                 .addPath(new BezierLine(middleRowStartPose, middleRowEndPose))
-                .addPath(new BezierLine(middleRowEndPose, launchPose))
-                .addParametricCallback(Constants.start, () -> {
-                    debugTelemetry.addData("CALLBACK", "middleRowPath stop triggered");
-                    debugTelemetry.update();
-                    Intake.INSTANCE.stop().schedule();
-                })
-                .setLinearHeadingInterpolation(middleRowEndPose.getHeading(), launchPose.getHeading())
                 .build();
         bottomRowPath = follower().pathBuilder()
                 .addPath(new BezierLine(launchPose, bottomRowStartPose))
@@ -144,17 +136,26 @@ public class CloseRedAuto extends NextFTCOpMode {
                     debugTelemetry.addData("CALLBACK", "bottomRowPath stop triggered");
                     debugTelemetry.update();
                     Intake.INSTANCE.stop().schedule();
+                    Flicker.INSTANCE.allDown();
                 })
                 .setLinearHeadingInterpolation(bottomRowEndPose.getHeading(), launchPose.getHeading())
                 .build();
         hitLeverPath = follower().pathBuilder()
-                .addPath(new BezierLine(middleRowEndPose, leverPose))
+                .addPath(new BezierLine(middleRowEndPose, leverBack))
+                .addParametricCallback(Constants.start, () -> {
+                    debugTelemetry.addData("CALLBACK", "middleRowPath stop triggered");
+                    debugTelemetry.update();
+                    Intake.INSTANCE.stop().schedule();
+                    Flicker.INSTANCE.allDown();
+                })
+                .setConstantHeadingInterpolation(0)
+                .addPath(new BezierLine(leverBack, leverPose))
                 .setConstantHeadingInterpolation(leverPose.getHeading())
+                .addParametricCallback(Constants.complete, () -> {
+                    new Delay(1);
+                })
                 .addPath(new BezierLine(leverPose, launchPose))
                 .setLinearHeadingInterpolation(leverPose.getHeading(), launchPose.getHeading())
-                .build();
-        parkPath = follower().pathBuilder()
-                .addPath(new BezierLine(launchPose,parkPose))
                 .build();
     }
 
@@ -162,6 +163,7 @@ public class CloseRedAuto extends NextFTCOpMode {
     public void onInit() {
         Flywheel.powerState = false;
         Turret.powerState =false;
+        Turret.INSTANCE.zero();
         Flicker.INSTANCE.setFlickDelay(Flicker.flickDelayAuto);
         debugTelemetry = telemetry;
         Flicker.INSTANCE.flickThreeBallsAuto().schedule();

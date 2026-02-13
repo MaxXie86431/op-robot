@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Team;
@@ -31,18 +32,19 @@ public class Turret implements Subsystem {
     public static int LEFT_BOUND_TICKS = -950;
     public static double PADDING = 0;
 
-    public static boolean locked = false;
+
     public static boolean powerState = false;
     private static double power;
     private MotorEx turretMotor;
 
     public static final Turret INSTANCE = new Turret();
+    public static double savedPos;
 
     private Turret() {}
 
     @Override
     public void initialize() {
-        turretMotor = new MotorEx("Turret-Gear").reversed().zeroed().brakeMode();
+        turretMotor = new MotorEx("Turret-Gear").reversed().brakeMode();
     }
 
     private final ControlSystem controller = ControlSystem.builder()
@@ -52,15 +54,19 @@ public class Turret implements Subsystem {
 
     public Command turnRight() {
         return new SequentialGroup(
-                new InstantCommand(() -> powerState = false),
+                new InstantCommand(() -> {
+                    powerState = false;
+                }),
                 new SetPower(turretMotor, MANUAL_SPEED)
         );
     }
 
-    public Command turnLeft(){
+    public Command turnLeft() {
         return new SequentialGroup(
-            new InstantCommand(() -> powerState = false),
-            new SetPower(turretMotor, -1 * MANUAL_SPEED)
+                new InstantCommand(() -> {
+                    powerState = false;
+                }),
+                new SetPower(turretMotor, -1*MANUAL_SPEED)
         );
     }
 
@@ -72,7 +78,7 @@ public class Turret implements Subsystem {
     }
 
     public void zero() {
-        turretMotor.zero();
+        turretMotor.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public Command turnByDegrees(double degrees){
@@ -107,7 +113,7 @@ public class Turret implements Subsystem {
         return getEncoderValue()/ TICKS_PER_DEGREE;
     }
 
-    public void setEncoderValue(int pos) {
+    public void setEncoderValue(double pos) {
         turretMotor.setCurrentPosition(pos);
     }
 

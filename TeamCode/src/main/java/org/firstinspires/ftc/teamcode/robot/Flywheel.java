@@ -38,6 +38,7 @@ public class Flywheel implements Subsystem{
     public static int tolerance = 30;
 
     public static boolean powerState = false;
+    public static boolean regressing = false;
 
     private final ControlSystem controller = ControlSystem.builder()
             .velPid(kP, kI, kD)
@@ -63,7 +64,10 @@ public class Flywheel implements Subsystem{
         //double ticksPerSecond = velocity * TICKS_PER_REVOLUTION / 60.0;
         return new SequentialGroup(
                 new InstantCommand(() -> powerState = true),
-                new RunToVelocity(controller, velocity, tolerance)
+                new ParallelDeadlineGroup(
+                        new Delay(0.00265*launchVelocity-1),
+                        new RunToVelocity(controller, velocity, tolerance)
+                )
         ).requires(this);
     }
 
@@ -128,27 +132,43 @@ public class Flywheel implements Subsystem{
     }
 
     public Command shootOut() {
+        //launchVelocity = GenetonUtils.INSTANCE.getTargetVelocity();
+        return new SequentialGroup(
+                //Turret.INSTANCE.autoTrackButton(),
+                //changed autoalign into parallel group here
+                new ParallelGroup(
+                        out(launchVelocity)
+                ),
+                Flicker.INSTANCE.flickThreeBalls()
+        );
+    }
+
+    public Command shootOutPerpetual = new LambdaCommand()
+            .setUpdate(() -> {
+                shootOut().schedule();
+            })
+            .perpetually();
+
+    public void setLaunchVelocity(double velocity) {
+        launchVelocity = velocity;
+    }
+
+    public Command endGameShot() {
         distanceToGoal = GenetonUtils.INSTANCE.getTargetLength();
         launchVelocity = GenetonUtils.INSTANCE.getTargetVelocity();
         return new SequentialGroup(
                 //Turret.INSTANCE.autoTrackButton(),
-                Turret.INSTANCE.autoAlign(),
-                new ParallelDeadlineGroup(
-                        new Delay(0.00265*launchVelocity-1.2),
+                //changed autoalign into parallel group here
+                new ParallelGroup(
+                        Turret.INSTANCE.autoAlign(),
                         out(launchVelocity)
-                ),
-                Flicker.INSTANCE.flickThreeBalls(),
-                Flicker.INSTANCE.flickThreeBalls()
+                )
         );
     }
 
     public Command constantShot(int velocity) {
         return new SequentialGroup(
-                new ParallelDeadlineGroup(
-                        new Delay(0.00265*velocity-1.2),
-                        out(velocity)
-                ),
-                Flicker.INSTANCE.flickThreeBalls()
+                out(velocity)
         );
     }
 
