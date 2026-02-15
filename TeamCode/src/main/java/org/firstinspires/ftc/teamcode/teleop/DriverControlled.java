@@ -163,10 +163,6 @@ public abstract class DriverControlled extends NextFTCOpMode {
                     Flywheel.INSTANCE.shutdown().schedule();
                 });
 
-        Gamepads.gamepad1().x()
-                .whenBecomesTrue(() -> {
-                    new InstantCommand(() -> Turret.INSTANCE.zero()).schedule();
-                });
 
         Gamepads.gamepad1().dpadLeft()
                 .whenBecomesTrue(() -> {
