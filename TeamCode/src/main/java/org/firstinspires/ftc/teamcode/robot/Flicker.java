@@ -40,11 +40,11 @@ public class Flicker implements Subsystem {
     public static boolean flick2Up = false;
     public static boolean flick3Up = false;
     public static double up1 = 0.5;
-    public static double down1 = 0.11;
-    public static double up2 = 0.5;
-    public static double down2 = 0.94;
-    public static double up3 = 0.8;
-    public static double down3 = 0;
+    public static double down1 = 0.12;
+    public static double up2 = 0.6;
+    public static double down2 = 0.92;
+    public static double up3 = 0.7;
+    public static double down3 = 0.05;
     public static double bumper = 0.17;
 
     public Command flick1() {

@@ -183,6 +183,21 @@ public abstract class DriverControlled extends NextFTCOpMode {
                     Turret.INSTANCE.stop().schedule();
                 });
 
+        Gamepads.gamepad1().x()
+                .whenBecomesTrue(() -> {
+                    Flicker.INSTANCE.flick1().schedule();
+                });
+
+        Gamepads.gamepad1().y()
+                .whenBecomesTrue(() -> {
+                    Flicker.INSTANCE.flick2().schedule();
+                });
+
+        Gamepads.gamepad1().b()
+                .whenBecomesTrue(() -> {
+                    Flicker.INSTANCE.flick3().schedule();
+                });
+
 
         //separation
 
@@ -243,20 +258,19 @@ public abstract class DriverControlled extends NextFTCOpMode {
                 });
 
 
-
         Gamepads.gamepad2().x()
                 .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.flick1().schedule();
+                    Flicker.INSTANCE.flick1Switch().schedule();
                 });
 
         Gamepads.gamepad2().y()
                 .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.flick2().schedule();
+                    Flicker.INSTANCE.flick2Switch().schedule();
                 });
 
         Gamepads.gamepad2().b()
                 .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.flick3().schedule();
+                    Flicker.INSTANCE.flick3Switch().schedule();
                 });
     }
 }
