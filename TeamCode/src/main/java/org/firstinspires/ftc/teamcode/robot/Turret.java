@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Team;
@@ -14,6 +15,7 @@ import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.commands.utility.LambdaCommand;
 import dev.nextftc.core.commands.utility.NullCommand;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.hardware.controllable.RunToPosition;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.powerable.SetPower;
@@ -97,6 +99,28 @@ public class Turret implements Subsystem {
 
     public Command autoAlign() {
         return turnToDegrees(GenetonUtils.INSTANCE.getTargetTurretAngle()+PADDING);
+    }
+
+    public Command tuneTurret(Gamepad gamepad){
+        double limeLightOffset = Limelight.INSTANCE.calculateAlignmentAngle();
+        if(!Limelight.INSTANCE.isConnected() || limeLightOffset==0){
+            return new NullCommand();
+        }
+        gamepad.rumble(500);
+        GenetonUtils.LIME_LIGHT_OFFSET = limeLightOffset;
+        return new SequentialGroup(
+                autoAlign(),
+                tuneByLimeLight(gamepad)
+        );
+    }
+
+    public Command tuneByLimeLight(Gamepad gamepad){
+        double limeLightOffset = Limelight.INSTANCE.calculateAlignmentAngle();
+        if(limeLightOffset!=0) {
+            gamepad.rumble(500);
+            GenetonUtils.LIME_LIGHT_OFFSET = limeLightOffset;
+        }
+        return turnToDegrees(limeLightOffset);
     }
 
     public Command autoAlignPerpetual = new LambdaCommand()

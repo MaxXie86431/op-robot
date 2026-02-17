@@ -121,7 +121,7 @@ public class Flywheel implements Subsystem{
                 }
                 ),
 
-                new SetPower(motor, 0)
+                new SetPower(motor, 0.3)
         ).requires(this);
     }
 

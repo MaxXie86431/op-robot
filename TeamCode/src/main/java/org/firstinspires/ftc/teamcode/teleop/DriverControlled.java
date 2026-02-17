@@ -38,7 +38,7 @@ public abstract class DriverControlled extends NextFTCOpMode {
     public DriverControlled() {
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(Flywheel.INSTANCE, Intake.INSTANCE, Flicker.INSTANCE, Turret.INSTANCE, ColorDetector.INSTANCE),//Limelight.INSTANCE,
+                new SubsystemComponent(Flywheel.INSTANCE, Intake.INSTANCE, Flicker.INSTANCE, Turret.INSTANCE, Limelight.INSTANCE),//, ColorDetector.INSTANCE,
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE);
     }
@@ -74,7 +74,11 @@ public abstract class DriverControlled extends NextFTCOpMode {
         telemetry.addData("Turret encoders: ", Turret.INSTANCE.getEncoderValue());
         telemetry.addData("goal angle: ", GenetonUtils.INSTANCE.getFieldTargetAngle());
         telemetry.addData("angle need to turn: ", GenetonUtils.INSTANCE.getTargetTurretAngle());
-        telemetry.addData("Sensor Values: ", ColorDetector.INSTANCE.getSensorValues());
+
+        telemetry.addData("LimeLight Yaw: ", Limelight.INSTANCE.calculateAlignmentAngle());
+        telemetry.addData("LimeLight Offset: ", GenetonUtils.LIME_LIGHT_OFFSET);//.INSTANCE.calculateAlignmentAngle());
+
+        //telemetry.addData("Sensor Values: ", ColorDetector.INSTANCE.getSensorValues());
 
         telemetry.update();
     }
@@ -105,12 +109,12 @@ public abstract class DriverControlled extends NextFTCOpMode {
 
         driverControlled.schedule();
         Flicker.INSTANCE.flickThreeBalls().schedule();
-        Turret.INSTANCE.autoAlignPerpetual.schedule();
 
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.2)
                 .whenBecomesTrue(() -> {
                     Flywheel.INSTANCE.shootOut().schedule();
+                    Turret.INSTANCE.autoAlignPerpetual.schedule();
                 })
                 .whenBecomesFalse(() -> {
                     Flywheel.INSTANCE.shutdown().schedule();
@@ -200,6 +204,7 @@ public abstract class DriverControlled extends NextFTCOpMode {
         Gamepads.gamepad2().rightTrigger().greaterThan(0.2)
                 .whenBecomesTrue(() -> {
                     Flywheel.INSTANCE.shootOut().schedule();
+                    Turret.INSTANCE.autoAlignPerpetual.schedule();
                 })
                 .whenBecomesFalse(() -> {
                     Flywheel.INSTANCE.shutdown().schedule();
@@ -267,6 +272,11 @@ public abstract class DriverControlled extends NextFTCOpMode {
         Gamepads.gamepad2().b()
                 .whenBecomesTrue(() -> {
                     Flicker.INSTANCE.flick3Switch().schedule();
+                });
+
+        Gamepads.gamepad1().touchpad()
+                .whenBecomesTrue(()->{
+                    Turret.INSTANCE.tuneTurret(gamepad1).schedule();
                 });
     }
 }

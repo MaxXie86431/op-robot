@@ -4,6 +4,8 @@ import com.bylazar.configurables.annotations.Configurable;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.PoseStorage;
 import org.firstinspires.ftc.teamcode.pedroPathing.Team;
+import org.firstinspires.ftc.teamcode.robot.Limelight;
+
 @Configurable
 public class GenetonUtils {
 
@@ -11,12 +13,23 @@ public class GenetonUtils {
 
     public static double SLOPE = 5.19679, CONSTANT = 773.09206,  PADDING=20;
 
+    public static double LIME_LIGHT_OFFSET = 0.0;
+
     public static final GenetonUtils INSTANCE = new GenetonUtils();
 
     private GenetonUtils(){}
 
 
     public double getTargetTurretAngle() {
+        return getTargetAngle() + LIME_LIGHT_OFFSET;
+    }
+
+    public double getLimeLightTargetAngle(double limelightOffset){
+        double robotHeading = PoseStorage.getHeadingDegrees();
+        return normalizeAngle(robotHeading + limelightOffset);
+    }
+
+    public double getTargetAngle(){
         double robotHeading = PoseStorage.getHeadingDegrees();
         double fieldAngleToTarget = getFieldTargetAngle();
         return normalizeAngle(robotHeading - fieldAngleToTarget);

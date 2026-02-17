@@ -66,7 +66,6 @@ public class SplitGamepads extends NextFTCOpMode {
         */
 
         telemetry.addData("color sensor values", ColorDetector.INSTANCE.getSensorValues());
-        telemetry.addData("Goal velocity", Limelight.goalVelocity);
         telemetry.addData("LED is on", LED.on);
         telemetry.addData("Distance from goal inside subsystem", Flywheel.distanceToGoal);
         telemetry.addData("current RPM", Flywheel.INSTANCE.getVelocityRPM());

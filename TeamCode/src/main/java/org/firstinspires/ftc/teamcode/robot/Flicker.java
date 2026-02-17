@@ -22,7 +22,7 @@ public class Flicker implements Subsystem {
     private final ServoEx servo2= new ServoEx("Flicker2");
     private final ServoEx servo3= new ServoEx("Flicker3");
     public static double pos = 0.5;
-    public static double flickDelay = 0;
+    public static double flickDelay = 0.8;
     public static double flickDelayTeleOp = 0.25;
     public static double flickDelayAuto = 0.4;
     public static double betweenflicksDelay = 0.09;
@@ -40,11 +40,11 @@ public class Flicker implements Subsystem {
     public static boolean flick2Up = false;
     public static boolean flick3Up = false;
     public static double up1 = 0.5;
-    public static double down1 = 0.12;
-    public static double up2 = 0.6;
-    public static double down2 = 0.92;
+    public static double down1 = 0.14;
+    public static double up2 = 0.55;
+    public static double down2 = 0.91;
     public static double up3 = 0.7;
-    public static double down3 = 0.05;
+    public static double down3 = 0.08;
     public static double bumper = 0.17;
 
     public Command flick1() {
@@ -151,42 +151,6 @@ public class Flicker implements Subsystem {
         else {
             return new NullCommand();
         }
-    }
-
-    public Command flickAll() {
-        String motif = Limelight.INSTANCE.color();
-        String inventory = ColorDetector.INSTANCE.getSensorValues();
-        List<Command> flicks= new ArrayList<>();
-
-        for (int i = 0; i <= 2; i++) { //sets new goal
-            if (flicked.length() >= 3) { //reset what you flicked bc you only care about groups of 3
-                flicked = "";
-                break;
-            }
-            String goal = motif.substring(flicked.length(), flicked.length() + 1); //determines what color ball you want based on motif and what you already flicked
-            for (int j = 0; j <= 2; j++) { //iterate over current inventory to check if it matches what you need in goal
-                if (inventory.substring(j, j + 1).equals(goal)) {
-                    flicks.add(chooseFlick(j + 1)); //add flick command to create sequential group later
-                    flicked += inventory.substring(j,j+1); //remember what you flicked
-                    inventory = inventory.substring(0,j) + " " + inventory.substring(j+1); //update inventory to accomodate for flicked ball
-                    break;
-                }
-            }
-        }
-
-        for (int k = 0; k <= 2; k++) { //re-iterate over inventory to find remaining balls if any
-            if (!(inventory.substring(k,k+1).equals(" "))) { // if there is a remaining ball js flick it
-                flicks.add(chooseFlick(k+1)); //add the flick command
-                flicked += inventory.substring(k,k+1); //update what you flicked
-            }
-        }
-        return new SequentialGroup( //actually creates command of flicks based on what was added earlier
-                flicks.get(0),
-
-                flicks.get(1),
-
-                flicks.get(2)
-        );
     }
 
     public Command allDown() {
