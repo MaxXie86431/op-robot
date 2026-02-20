@@ -15,12 +15,17 @@ public class GenetonUtils {
 
     public static double LIME_LIGHT_OFFSET = 0.0;
 
+    public static boolean USE_LIMELIGHT = true;
+
     public static final GenetonUtils INSTANCE = new GenetonUtils();
 
     private GenetonUtils(){}
 
 
     public double getTargetTurretAngle() {
+        if(USE_LIMELIGHT){
+            LIME_LIGHT_OFFSET = Limelight.INSTANCE.calculateAlignmentAngle();
+        }
         return getTargetAngle() + LIME_LIGHT_OFFSET;
     }
 
@@ -58,5 +63,8 @@ public class GenetonUtils {
         while (angle > 180)  angle -= 360;
         while (angle <= -180) angle += 360;
         return angle;
+    }
+    public void changePadding(double pad) {
+        PADDING += pad;
     }
 }

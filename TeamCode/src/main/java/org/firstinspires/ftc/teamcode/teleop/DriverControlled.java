@@ -28,6 +28,8 @@ import dev.nextftc.hardware.driving.DriverControlledCommand;
 public abstract class DriverControlled extends NextFTCOpMode {
     public static boolean turret = true;
     public static double speed = 0.7;
+    public static double upAngle = 45;
+    public static double downAngle = -10;
 
     private DriverControlledCommand driverControlled = new PedroDriverControlled(
             Gamepads.gamepad1().leftStickY().negate(),
@@ -77,6 +79,10 @@ public abstract class DriverControlled extends NextFTCOpMode {
 
         telemetry.addData("LimeLight Yaw: ", Limelight.INSTANCE.calculateAlignmentAngle());
         telemetry.addData("LimeLight Offset: ", GenetonUtils.LIME_LIGHT_OFFSET);//.INSTANCE.calculateAlignmentAngle());
+
+        telemetry.addData("Turret pad: ", Turret.PADDING);
+        telemetry.addData("Regression pad: ", GenetonUtils.PADDING);
+        telemetry.addData("Use LimeLight Tracking: ", GenetonUtils.USE_LIMELIGHT);
 
         //telemetry.addData("Sensor Values: ", ColorDetector.INSTANCE.getSensorValues());
 
@@ -182,21 +188,26 @@ public abstract class DriverControlled extends NextFTCOpMode {
                 .whenBecomesFalse(() -> {
                     Turret.INSTANCE.stop().schedule();
                 });
-
+        Gamepads.gamepad1().dpadUp()
+                .whenBecomesTrue(() -> {
+                    Turret.INSTANCE.turnByDegrees(upAngle).schedule();
+                })
+                .whenBecomesFalse(() -> {
+                    Turret.INSTANCE.stop().schedule();
+                });
+        Gamepads.gamepad1().dpadDown()
+                .whenBecomesTrue(() -> {
+                    Turret.INSTANCE.turnByDegrees(downAngle).schedule();
+                })
+                .whenBecomesFalse(() -> {
+                    Turret.INSTANCE.stop().schedule();
+                });
         Gamepads.gamepad1().x()
                 .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.flick1().schedule();
+                    Turret.INSTANCE.llAlign().schedule();
                 });
 
-        Gamepads.gamepad1().y()
-                .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.flick2().schedule();
-                });
 
-        Gamepads.gamepad1().b()
-                .whenBecomesTrue(() -> {
-                    Flicker.INSTANCE.flick3().schedule();
-                });
 
 
         //separation
@@ -245,18 +256,21 @@ public abstract class DriverControlled extends NextFTCOpMode {
 
         Gamepads.gamepad2().dpadLeft()
                 .whenBecomesTrue(() -> {
-                    Turret.INSTANCE.turnLeft().schedule();
-                })
-                .whenBecomesFalse(() -> {
-                    Turret.INSTANCE.stop().schedule();
+                    Turret.INSTANCE.changePadding(-4);
                 });
         Gamepads.gamepad2().dpadRight()
                 .whenBecomesTrue(() -> {
-                    Turret.INSTANCE.turnRight().schedule();
-                })
-                .whenBecomesFalse(() -> {
-                    Turret.INSTANCE.stop().schedule();
+                    Turret.INSTANCE.changePadding(4);
                 });
+        Gamepads.gamepad2().dpadUp()
+                .whenBecomesTrue(() -> {
+                    GenetonUtils.INSTANCE.changePadding(10);
+                });
+        Gamepads.gamepad2().dpadDown()
+                .whenBecomesTrue(() -> {
+                    GenetonUtils.INSTANCE.changePadding(-10);
+                });
+
 
 
         Gamepads.gamepad2().x()
@@ -277,6 +291,11 @@ public abstract class DriverControlled extends NextFTCOpMode {
         Gamepads.gamepad1().touchpad()
                 .whenBecomesTrue(()->{
                     Turret.INSTANCE.tuneTurret(gamepad1).schedule();
+                });
+
+        Gamepads.gamepad2().a()
+                .whenBecomesTrue(() -> {
+                    GenetonUtils.USE_LIMELIGHT = !GenetonUtils.USE_LIMELIGHT;
                 });
     }
 }

@@ -24,9 +24,9 @@ import dev.nextftc.hardware.powerable.SetPower;
 public class Turret implements Subsystem {
 
     //PID Variable
-    public static double kP = 0.005, kI = 0, kD = 0;
+    public static double kP = 0.00175, kI = 0, kD = 0.0001;
     //Feed Forward Values
-    public static double kV = 0.025, kA = 0.02, kS = 0.03;
+    public static double kV = 0, kA = 0, kS = 0.05;
 
     public static double MANUAL_SPEED = 0.5;
     public static double TICKS_PER_DEGREE = 9.51;
@@ -102,12 +102,9 @@ public class Turret implements Subsystem {
     }
 
     public Command tuneTurret(Gamepad gamepad){
-        double limeLightOffset = Limelight.INSTANCE.calculateAlignmentAngle();
-        if(!Limelight.INSTANCE.isConnected() || limeLightOffset==0){
+        if(!Limelight.INSTANCE.isConnected()){
             return new NullCommand();
         }
-        gamepad.rumble(500);
-        GenetonUtils.LIME_LIGHT_OFFSET = limeLightOffset;
         return new SequentialGroup(
                 autoAlign(),
                 tuneByLimeLight(gamepad)
@@ -141,12 +138,16 @@ public class Turret implements Subsystem {
         turretMotor.setCurrentPosition(pos);
     }
 
-    public Command autoTrackButton() {
+    public Command llAlign() {
         double angle = Limelight.INSTANCE.calculateAlignmentAngle();
         if (angle != 0) {
-            return turnByDegrees(angle+PADDING);
+            return turnByDegrees(angle);
         }
         return new NullCommand();
+    }
+
+    public void changePadding(double pad) {
+        PADDING += pad;
     }
 
     @Override
