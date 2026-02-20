@@ -29,6 +29,7 @@ import java.util.List;
 @Configurable
 public class Limelight implements Subsystem {
     public static final Limelight INSTANCE = new Limelight();
+    private static final int MOTIF_GOAL_PIPELINE = 3;
     private static final int RED_GOAL_PIPELINE = 2;
     private static final int BLUE_GOAL_PIPELINE = 1;
 
@@ -41,7 +42,7 @@ public class Limelight implements Subsystem {
         // Use OpModeData to get hardwareMap statically (NextFTC pattern)
         ll = ActiveOpMode.hardwareMap().get(Limelight3A.class, "limelight");
         ll.start();
-        ll.pipelineSwitch(Team.getTeam()==0?BLUE_GOAL_PIPELINE:RED_GOAL_PIPELINE);
+        //ll.pipelineSwitch(Team.getTeam()==0?BLUE_GOAL_PIPELINE:RED_GOAL_PIPELINE);
         ll.setPollRateHz(60);
     }
 
@@ -65,9 +66,32 @@ public class Limelight implements Subsystem {
         ll.pipelineSwitch(BLUE_GOAL_PIPELINE);
     }
 
+    public void setMotifPipeline() {
+        ll.pipelineSwitch(MOTIF_GOAL_PIPELINE);
+    }
+
 
     public void start() {
         ll.start();
+    }
+
+
+    public int[] color() {
+        LLResult result = ll.getLatestResult();
+        if (result != null && result.isValid()) {
+            List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
+            for (LLResultTypes.FiducialResult fiducial : fiducials) {
+                int id = fiducial.getFiducialId();
+                if (id == 21){
+                    return new int[]{1,0,0};
+                } else if (id == 22){
+                    return new int[]{0,1,0};
+                } else if (id == 23){
+                    return new int[]{0,0,1};
+                }
+            }
+        }
+        return new int[]{0,0,0};
     }
 
 }

@@ -32,13 +32,15 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 @Configurable
 @Autonomous(name = "Far Human Blue Auto")
 public class FarBlueHumanAuto extends NextFTCOpMode {
-    private static final Pose startPose = new Pose(54, 10, Math.toRadians(112));
-    private static final Pose humanPlayerPose = new Pose(10, 10, Math.toRadians(90));
-    private static final Pose moveBackPose = new Pose(40, 10,Math.toRadians(90));
+    private static final Pose startPose = new Pose(54, 12, Math.toRadians(111));
+    private static final Pose launchPose = new Pose(54, 12, Math.toRadians(111));
+    private static final Pose humanPlayerPose = new Pose(12, 13, Math.toRadians(90));
+    private static final Pose moveBackPose = new Pose(40, 13,Math.toRadians(90));
     public static int FAR_SPEED = 1500;
     public static double initialDelay = 10;
     public static double delayBetweenCycles = 2;
-    private PathChain initialToHumanPlayer;
+    private PathChain launchToHumanPlayer;
+    private PathChain initialtoLaunchPose;
     private PathChain outtaTheWay;
     static PoseHistory poseHistory;
     private Telemetry debugTelemetry;
@@ -64,42 +66,32 @@ public class FarBlueHumanAuto extends NextFTCOpMode {
                 ),
                 Flicker.INSTANCE.flickThreeBallsAuto(),
                 Intake.INSTANCE.in(),
-                new FollowPath(initialToHumanPlayer),
+                new FollowPath(launchToHumanPlayer),
                 Flicker.INSTANCE.flickThreeBallsAuto(),
-                new Delay(delayBetweenCycles),
-                new FollowPath(initialToHumanPlayer),
+                //new Delay(delayBetweenCycles),
+                new FollowPath(launchToHumanPlayer),
                 Flicker.INSTANCE.flickThreeBallsAuto(),
-                new Delay(delayBetweenCycles),
-                new FollowPath(initialToHumanPlayer),
-                Flicker.INSTANCE.flickThreeBallsAuto(),
-                new Delay(delayBetweenCycles),
-                new FollowPath(initialToHumanPlayer),
-                Flicker.INSTANCE.flickThreeBallsAuto(),
-                new Delay(delayBetweenCycles),
-                new FollowPath(initialToHumanPlayer),
-                Flicker.INSTANCE.flickThreeBallsAuto(),
-                new Delay(delayBetweenCycles),
-                new FollowPath(initialToHumanPlayer),
-                Flicker.INSTANCE.flickThreeBallsAuto(),
-                new Delay(delayBetweenCycles),
-
                 Flywheel.INSTANCE.shutdown(),
                 new FollowPath(outtaTheWay)
         );
     }
 
     public void buildPaths() {
-        initialToHumanPlayer = follower().pathBuilder()
-                .addPath(new BezierLine(startPose, humanPlayerPose))
+        launchToHumanPlayer = follower().pathBuilder()
+                .addPath(new BezierLine(launchPose, humanPlayerPose))
                 .addPath(new BezierLine(humanPlayerPose, moveBackPose))
                 .setConstantHeadingInterpolation(humanPlayerPose.getHeading())
                 .addPath(new BezierLine(moveBackPose, humanPlayerPose))
-                .addPath(new BezierLine(humanPlayerPose, startPose))
-                .setLinearHeadingInterpolation(humanPlayerPose.getHeading(), startPose.getHeading())
+                .addPath(new BezierLine(humanPlayerPose, launchPose))
+                .setLinearHeadingInterpolation(humanPlayerPose.getHeading(), launchPose.getHeading())
+                .build();
+        initialtoLaunchPose = follower().pathBuilder()
+                .addPath(new BezierLine(startPose, launchPose))
+                .setLinearHeadingInterpolation(humanPlayerPose.getHeading(), launchPose.getHeading())
                 .build();
         outtaTheWay = follower().pathBuilder()
-                .addPath(new BezierLine(startPose, humanPlayerPose))
-                .setLinearHeadingInterpolation(startPose.getHeading(), humanPlayerPose.getHeading())
+                .addPath(new BezierLine(launchPose, humanPlayerPose))
+                .setLinearHeadingInterpolation(launchPose.getHeading(), humanPlayerPose.getHeading())
                 .build();
     }
 
@@ -108,12 +100,12 @@ public class FarBlueHumanAuto extends NextFTCOpMode {
         Flywheel.powerState = false;
         Turret.powerState = false;
         Turret.INSTANCE.zero();
-        Flicker.INSTANCE.setFlickDelay(Flicker.flickDelayAuto);
+        Flicker.betweenflicksDelayAuto = 0.4;
+        Flicker.INSTANCE.setFlickDelay(0.6);
         debugTelemetry = telemetry;
         // Initialize the follower with your constants
-        Flicker.INSTANCE.flickThreeBalls().schedule();
-        PoseStorage.setPose(startPose);
-        follower().setStartingPose(startPose);
+        PoseStorage.setPose(launchPose);
+        follower().setStartingPose(launchPose);
         follower().update();
         buildPaths();
     }

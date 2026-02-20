@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.bylazar.configurables.annotations.Configurable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import dev.nextftc.core.commands.delays.Delay;
@@ -22,12 +23,13 @@ public class Flicker implements Subsystem {
     private final ServoEx servo2= new ServoEx("Flicker2");
     private final ServoEx servo3= new ServoEx("Flicker3");
     public static double pos = 0.5;
-    public static double flickDelay = 0.8;
-    public static double flickDelayTeleOp = 0.8;
-    public static double flickDelayAuto = 0.8;
+
+    public static double flickDelay = 0;
+    public static double flickDelayTeleOp = 0.5;
+    public static double flickDelayAuto = 0.4;
     public static double betweenflicksDelay = 0.09;
-    public static double betweenflicksDelayAuto = 0.09;
-    private static String flicked = "";
+    public static double betweenflicksDelayAuto = 0.1;
+    private static ArrayList<Integer> flicked = new ArrayList<>();
     /*
     public static double up1 = 0.4;
     public static double down1 = 0.03;
@@ -46,7 +48,12 @@ public class Flicker implements Subsystem {
     public static double up3 = 0.7;
     public static double down3 = 0.08;
     public static double bumper = 0.17;
+    public static int[] motif = new int[]{0,0,0};
 
+    @Override
+    public void initialize() {
+        Flicker.INSTANCE.flickThreeBalls().schedule();
+    }
     public Command flick1() {
         return new SequentialGroup(
                 new SetPosition(servo1, up1),
@@ -153,6 +160,43 @@ public class Flicker implements Subsystem {
         }
     }
 
+    public Command order() {
+
+        int[] flickers = ColorDetector.INSTANCE.getColors();
+        ArrayList<Command> commands = new ArrayList<>();
+
+        for (int i = 0; i < 3; i++) {
+            int needed = motif[flicked.size() % 3];
+            int chosenFlicker = -1;
+
+            // Find a flicker matching the needed color
+            for (int f = 0; f < 3; f++) {
+                if (flickers[f] == needed) {
+                    chosenFlicker = f;
+                    break;
+                }
+            }
+
+            // No match — use first available non-empty flicker
+            if (chosenFlicker == -1) {
+                for (int f = 0; f < 3; f++) {
+                    if (flickers[f] != -1) {
+                        chosenFlicker = f;
+                        break;
+                    }
+                }
+            }
+
+            if (chosenFlicker != -1) {
+                flickers[chosenFlicker] = -1;
+                flicked.add(chosenFlicker);
+                commands.add(chooseFlick(chosenFlicker));
+            }
+        }
+
+        return new SequentialGroup(commands.toArray(new Command[0]));
+    }
+
     public Command allDown() {
         return new ParallelGroup(
                 new SetPosition(servo1, down1),
@@ -176,9 +220,9 @@ public class Flicker implements Subsystem {
         return new SequentialGroup(
                 flick3(),
                 new Delay(betweenflicksDelayAuto),
-                flick2(),
-                new Delay(betweenflicksDelayAuto),
                 flick1(),
+                new Delay(betweenflicksDelayAuto),
+                flick2(),
                 new Delay(betweenflicksDelayAuto)
         );
     }
@@ -187,4 +231,18 @@ public class Flicker implements Subsystem {
         flickDelay = delay;
     }
 
+    public String motifInfo(int[] pattern) {
+        if (Arrays.equals(pattern, new int[]{1,0,0})) {
+            return "gpp";
+        }
+        else if (Arrays.equals(pattern, new int[]{0,1,0})) {
+            return "pgp";
+        }
+        else if (Arrays.equals(pattern, new int[]{0,0,1})) {
+            return "ppg";
+        }
+        else {
+            return "motif not found";
+        }
+    }
 }

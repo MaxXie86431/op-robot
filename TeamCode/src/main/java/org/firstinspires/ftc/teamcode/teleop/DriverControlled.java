@@ -91,13 +91,13 @@ public abstract class DriverControlled extends NextFTCOpMode {
 
     @Override
     public void onInit() {
+        initTeam();
         Flywheel.powerState = false;
         Turret.powerState = false;
         Flicker.INSTANCE.setFlickDelay(Flicker.flickDelayTeleOp);
         //PoseStorage.resetPose();
         follower().setStartingPose(PoseStorage.getPose());
         follower().update();
-        initTeam();
         telemetryUpdate();
         //Turret.INSTANCE.zero();
     }
@@ -114,7 +114,7 @@ public abstract class DriverControlled extends NextFTCOpMode {
 
 
         driverControlled.schedule();
-        Flicker.INSTANCE.flickThreeBalls().schedule();
+        //Flicker.INSTANCE.flickThreeBalls().schedule();
 
 
         Gamepads.gamepad1().rightTrigger().greaterThan(0.2)
@@ -286,6 +286,16 @@ public abstract class DriverControlled extends NextFTCOpMode {
         Gamepads.gamepad2().b()
                 .whenBecomesTrue(() -> {
                     Flicker.INSTANCE.flick3Switch().schedule();
+                });
+
+        Gamepads.gamepad1().touchpad()
+                .whenBecomesTrue(()->{
+                    Turret.INSTANCE.tuneTurret(gamepad1).schedule();
+                });
+
+        Gamepads.gamepad2().a()
+                .whenBecomesTrue(() -> {
+                    GenetonUtils.USE_LIMELIGHT = !GenetonUtils.USE_LIMELIGHT;
                 });
 
         Gamepads.gamepad1().touchpad()

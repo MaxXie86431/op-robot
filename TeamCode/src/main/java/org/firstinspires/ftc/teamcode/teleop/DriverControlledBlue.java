@@ -4,6 +4,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Team;
+import org.firstinspires.ftc.teamcode.robot.Limelight;
 
 @Configurable
 @TeleOp(name = "DriverControlledBlue")
@@ -12,5 +13,6 @@ public class DriverControlledBlue extends DriverControlled {
     @Override
     protected void initTeam() {
         Team.setTeam(0);
+        Limelight.INSTANCE.setBlueGoalPipeline();
     }
 }

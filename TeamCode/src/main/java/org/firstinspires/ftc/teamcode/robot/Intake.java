@@ -49,7 +49,11 @@ public class Intake implements Subsystem {
     }
 
     public Command stop(){
-        return new SetPower(intakeMotor, 0).requires(this);
+
+        return new ParallelGroup(
+                new SetPower(intakeMotor,0),
+                Flicker.INSTANCE.flickdown1()
+                );
     }
 
 }
